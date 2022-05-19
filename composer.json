@@ -1,0 +1,29 @@
+{
+  "name": "be/app-doc",
+  "type": "library",
+  "description": "文档管理系统",
+  "keywords": [
+    "PHP",
+    "doc",
+    "文档管理系统"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "liu12",
+      "email": "i@liu12.com",
+      "homepage": "http://www.liu12.com/"
+    }
+  ],
+  "require": {
+    "be/be": "^2.2",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Be\\App\\Doc\\": "src/"
+    }
+  }
+}
+
+
