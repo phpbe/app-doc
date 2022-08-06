@@ -1,8 +1,9 @@
-# 内容管理系统
+# 文档管理系统
 
 ## 应用简介
 
-    be/app-cms 是一款基于BE框架实现的内容管理系统；
+    be/app-doc 是一款基于BE框架实现的文档管理系统；
+    适用于管理文档资源，如：技术文档、开发文档，
     以Redis缓存和ES搜索引擎支撑高负载应用场景；
     可以支持亿级以上数据量的高并发访问；
 
@@ -15,4 +16,4 @@
 
 ### 2 安装 be/app-etl
 
-    composer require be/app-cms
+    composer require be/app-doc
