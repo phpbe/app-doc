@@ -6,6 +6,6 @@ composer.lock
 Thumbs.db
 
 /data
-/upload
+/www
 /vendor
 /.idea
