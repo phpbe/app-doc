@@ -26,11 +26,11 @@ class Doc extends Auth
     {
         Be::getAdminPlugin('Curd')->setting([
 
-            'label' => '项目',
-            'table' => 'doc_category',
+            'label' => '项目列表',
+            'table' => 'doc_project',
 
             'grid' => [
-                'title' => '项目',
+                'title' => '项目列表',
 
                 'filter' => [
                     ['is_delete', '=', '0'],
@@ -42,8 +42,8 @@ class Doc extends Auth
                 'form' => [
                     'items' => [
                         [
-                            'name' => 'name',
-                            'label' => '名称',
+                            'name' => 'title',
+                            'label' => '项目标题',
                         ],
                     ],
                 ],
@@ -52,7 +52,7 @@ class Doc extends Auth
                     'items' => [
                         [
                             'label' => '新建项目',
-                            'action' => 'create',
+                            'action' => 'createProject',
                             'target' => 'self', // 'ajax - ajax请求 / dialog - 对话框窗口 / drawer - 抽屉 / self - 当前页面 / blank - 新页面'
                             'ui' => [
                                 'icon' => 'el-icon-plus',
@@ -92,7 +92,7 @@ class Doc extends Auth
                         ],
                         [
                             'name' => 'title',
-                            'label' => '名称',
+                            'label' => '项目标题',
                             'align' => 'left',
                         ],
                         [
@@ -122,23 +122,24 @@ class Doc extends Auth
                     ],
                     'operation' => [
                         'label' => '操作',
-                        'width' => '180',
+                        'width' => '240',
                         'items' => [
                             [
                                 'label' => '',
                                 'tooltip' => '编辑文档',
-                                'action' => 'chapters',
-                                'target' => 'self',
+                                'action' => 'goChapters',
+                                'target' => 'blank',
                                 'ui' => [
+                                    'type' => 'success',
                                     ':underline' => 'false',
                                     'style' => 'font-size: 20px;',
                                 ],
-                                'icon' => 'el-icon-edit',
+                                'icon' => 'el-icon-document-copy',
                             ],
                             [
                                 'label' => '',
                                 'tooltip' => '编辑项目',
-                                'action' => 'edit',
+                                'action' => 'editProject',
                                 'target' => 'self',
                                 'ui' => [
                                     ':underline' => 'false',
@@ -149,13 +150,9 @@ class Doc extends Auth
                             [
                                 'label' => '',
                                 'tooltip' => '删除',
-                                'task' => 'fieldEdit',
+                                'action' => 'deleteProject',
                                 'confirm' => '确认要删除么？',
                                 'target' => 'ajax',
-                                'postData' => [
-                                    'field' => 'is_delete',
-                                    'value' => 1,
-                                ],
                                 'ui' => [
                                     'type' => 'danger',
                                     ':underline' => 'false',
@@ -220,54 +217,15 @@ class Doc extends Auth
                     ]
                 ],
             ],
-
-            'fieldEdit' => [
-                'events' => [
-                    'before' => function ($tuple) {
-                        $postData = Be::getRequest()->json();
-                        $field = $postData['postData']['field'];
-                        if ($field === 'is_delete') {
-                            $value = $postData['postData']['value'];
-                            if ($value === 1) {
-                                $tuple->url = $tuple->url . '-' . $tuple->id;
-                            }
-                        }
-
-                        $tuple->update_time = date('Y-m-d H:i:s');
-                    },
-                    'success' => function () {
-                        $postData = Be::getRequest()->json();
-
-                        $categoryIds = [];
-                        if (isset($postData['selectedRows'])) {
-                            foreach ($postData['selectedRows'] as $row) {
-                                $categoryIds[] = $row['id'];
-                            }
-                        } elseif (isset($postData['row'])) {
-                            $categoryIds[] = $postData['row']['id'];
-                        }
-
-                        $chapterIds = Be::getTable('doc_chapter_category')
-                            ->where('category_id', 'IN',  $categoryIds)
-                            ->getValues('chapter_id');
-                        if (count($chapterIds) > 0) {
-                            Be::getService('App.Doc.Admin.Chapter')->onUpdate($chapterIds);
-                        }
-
-                        Be::getService('App.Doc.Admin.Project')->onUpdate($categoryIds);
-                    },
-                ],
-            ],
-
         ])->execute();
     }
 
     /**
      * 新建项目
      *
-     * @BePermission("新建", ordering="1.21")
+     * @BePermission("新建项目", ordering="1.11")
      */
-    public function create()
+    public function createProject()
     {
         $request = Be::getRequest();
         $response = Be::getResponse();
@@ -284,18 +242,18 @@ class Doc extends Auth
                 $response->json();
             }
         } else {
-            $response->set('category', false);
+            $response->set('project', false);
             $response->set('title', '新建项目');
-            $response->display('App.Doc.Admin.Project.edit');
+            $response->display('App.Doc.Admin.Doc.editProject');
         }
     }
 
     /**
-     * 编辑
+     * 编辑项目
      *
-     * @BePermission("编辑", ordering="1.32")
+     * @BePermission("编辑项目", ordering="1.12")
      */
-    public function edit()
+    public function editProject()
     {
         $request = Be::getRequest();
         $response = Be::getResponse();
@@ -316,22 +274,58 @@ class Doc extends Auth
             if ($postData) {
                 $postData = json_decode($postData, true);
                 if (isset($postData['row']['id']) && $postData['row']['id']) {
-                    $response->redirect(beAdminUrl('Doc.Project.edit', ['id' => $postData['row']['id']]));
+                    $response->redirect(beAdminUrl('Doc.Doc.editProject', ['id' => $postData['row']['id']]));
                 }
             }
         } else {
-            $pageId = $request->get('id', '');
-            $category = Be::getService('App.Doc.Admin.Project')->getProject($pageId);
-            $response->set('category', $category);
+            $projectId = $request->get('id', '');
+            $project = Be::getService('App.Doc.Admin.Project')->getProject($projectId);
+            $response->set('project', $project);
             $response->set('title', '编辑项目');
-            $response->display('App.Doc.Admin.Project.edit');
+            $response->display('App.Doc.Admin.Doc.editProject');
         }
     }
 
     /**
-     * 指定项目下的项目章节管理
+     * 删除项目
      *
-     * @BePermission("项目章节管理", ordering="1.33")
+     * @BePermission("删除项目", ordering="1.13")
+     */
+    public function deleteProject()
+    {
+        $request = Be::getRequest();
+        $response = Be::getResponse();
+
+        try {
+            $postData = $request->json();
+
+            $categoryIds = [];
+            if (isset($postData['selectedRows'])) {
+                foreach ($postData['selectedRows'] as $row) {
+                    $categoryIds[] = $row['id'];
+                }
+            } elseif (isset($postData['row'])) {
+                $categoryIds[] = $postData['row']['id'];
+            }
+
+            if (count($categoryIds) > 0) {
+                Be::getService('App.Doc.Admin.Project')->delete($categoryIds);
+            }
+
+            $response->set('success', true);
+            $response->set('message', '删除项目成功！');
+            $response->json();
+        } catch (\Throwable $t) {
+            $response->set('success', false);
+            $response->set('message', $t->getMessage());
+            $response->json();
+        }
+    }
+
+    /**
+     * 指定项目下的项目文档管理
+     *
+     * @BePermission("项目文档管理", ordering="1.14")
      */
     public function goChapters()
     {
@@ -342,265 +336,98 @@ class Doc extends Auth
         if ($postData) {
             $postData = json_decode($postData, true);
             if (isset($postData['row']['id']) && $postData['row']['id']) {
-                $response->redirect(beAdminUrl('Doc.Project.chapters', ['id' => $postData['row']['id']]));
+                $response->redirect(beAdminUrl('Doc.Doc.chapters', ['id' => $postData['row']['id']]));
             }
         }
     }
 
     /**
-     * 指定项目下的项目章节管理
+     * 指定项目下的项目文档管理
      *
-     * @BePermission("项目章节管理")
+     * @BePermission("项目文档管理")
      */
     public function chapters()
     {
         $request = Be::getRequest();
         $response = Be::getResponse();
 
-        $categoryId = $request->get('id', '');
-        $category = Be::getService('App.Doc.Admin.Project')->getProject($categoryId);
+        $projectId = $request->get('id', '');
 
-        $filter = [
-            ['is_delete', '=', '0'],
-        ];
+        $project = Be::getService('App.Doc.Admin.Project')->getProject($projectId);
+        $response->set('project', $project);
 
-        $chapterIds = Be::getTable('doc_chapter_category')
-            ->where('category_id', $categoryId)
-            ->getValues('chapter_id');
-        if (count($chapterIds) > 0) {
-            $filter[] = [
-                'id', 'IN', $chapterIds
-            ];
-        } else {
-            $filter[] = [
-                'id', '=', ''
-            ];
-        }
+        $chapterTree = Be::getService('App.Doc.Admin.Chapter')->getChapterTree($projectId);
+        $response->set('chapterTree', $chapterTree);
 
-        Be::getAdminPlugin('Curd')->setting([
-            'label' => '项目 ' . $category->name . ' 下的章节',
-            'table' => 'doc_chapter',
-            'grid' => [
-                'title' => '项目 ' . $category->name . ' 下的章节管理',
+        $configChapter = Be::getConfig('App.Doc.Chapter');
+        $response->set('configChapter', $configChapter);
 
-                'filter' => $filter,
+        $response->set('title', '项目文档管理');
 
-                'titleRightToolbar' => [
-                    'items' => [
-                        [
-                            'label' => '返回',
-                            'url' => beAdminUrl('Doc.Project.categories'),
-                            'target' => 'self',
-                            'ui' => [
-                                'icon' => 'el-icon-back'
-                            ]
-                        ],
-                        [
-                            'label' => '添加章节',
-                            'url' => beAdminUrl('Doc.Project.addChapter', ['id' => $categoryId]),
-                            'target' => 'drawer', // 'ajax - ajax请求 / dialog - 对话框窗口 / drawer - 抽屉 / self - 当前页面 / blank - 新页面'
-                            'drawer' => [
-                                'width' => '60%',
-                            ],
-                            'ui' => [
-                                'icon' => 'el-icon-plus',
-                                'type' => 'primary',
-                            ]
-                        ],
-                    ]
-                ],
-
-                'tableToolbar' => [
-                    'items' => [
-                        [
-                            'label' => '批量从此项目中移除',
-                            'task' => 'fieldEdit',
-                            'target' => 'ajax',
-                            'confirm' => '确认要从此项目中移除吗？',
-                            'postData' => [
-                                'field' => 'is_delete',
-                                'value' => '1',
-                            ],
-                            'ui' => [
-                                'icon' => 'el-icon-delete',
-                                'type' => 'danger'
-                            ]
-                        ],
-                    ]
-                ],
-
-                'table' => [
-
-                    'items' => [
-                        [
-                            'driver' => TableItemSelection::class,
-                            'width' => '50',
-                        ],
-                        [
-                            'name' => 'image',
-                            'label' => '封面图片',
-                            'width' => '90',
-                            'driver' => TableItemImage::class,
-                            'ui' => [
-                                'style' => 'max-width: 60px; max-height: 60px'
-                            ],
-                            'value' => function($row) {
-                                if ($row['image'] === '') {
-                                    return Be::getProperty('App.Doc')->getWwwUrl() . '/Template/Chapter/images/no-image.jpg';
-                                }
-                                return $row['image'];
-                            },
-                        ],
-                        [
-                            'name' => 'title',
-                            'label' => '章节标题',
-                            'driver' => TableItemLink::class,
-                            'align' => 'left',
-                            'url' => beAdminUrl('Doc.Chapter.chapters', ['task'=>'detail']),
-                            'drawer' => [
-                                'width' => '80%'
-                            ],
-                        ],
-                    ],
-
-                    'operation' => [
-                        'label' => '操作',
-                        'width' => '150',
-                        'items' => [
-                            [
-                                'label' => '',
-                                'tooltip' => '预览',
-                                'url' => beAdminUrl('Doc.Chapter.preview'),
-                                'target' => '_blank',
-                                'ui' => [
-                                    'type' => 'success',
-                                    ':underline' => 'false',
-                                    'style' => 'font-size: 20px;',
-                                ],
-                                'icon' => 'el-icon-view',
-                            ],
-                            [
-                                'label' => '',
-                                'tooltip' => '从此项目中移除',
-                                'url' => beAdminUrl('Doc.Project.deleteChapter', ['id' => $categoryId]),
-                                'confirm' => '确认要从此项目中移除么？',
-                                'target' => 'ajax',
-                                'ui' => [
-                                    'type' => 'danger',
-                                    ':underline' => 'false',
-                                    'style' => 'font-size: 20px;',
-                                ],
-                                'icon' => 'el-icon-delete',
-                            ],
-                        ]
-                    ],
-                ],
-            ],
-        ])->execute();
+        $response->display('App.Doc.Admin.Doc.chapters');
     }
 
     /**
-     * 指定项目下的章节 - 添加
+     * 获取文档
      *
-     * @BePermission("项目章节管理")
+     * @BePermission("项目文档管理")
+     */
+    public function getChapter()
+    {
+        $request = Be::getRequest();
+        $response = Be::getResponse();
+
+        try {
+            $chapterId = $request->json('chapter_id', '');
+            $chapter = Be::getService('App.Doc.Admin.Chapter')->getChapter($chapterId);
+            $response->set('success', true);
+            $response->set('message', '获取文档成功！');
+            $response->set('chapter', $chapter);
+            $response->json();
+        } catch (\Throwable $t) {
+            $response->set('success', false);
+            $response->set('message', $t->getMessage());
+            $response->json();
+        }
+    }
+
+    /**
+     * 添加文档
+     *
+     * @BePermission("项目文档管理")
      */
     public function addChapter()
     {
         $request = Be::getRequest();
         $response = Be::getResponse();
 
-        $categoryId = $request->get('id', '');
-        $category = Be::getService('App.Doc.Admin.Project')->getProject($categoryId);
-
-        $filter = [
-            ['is_delete', '=', '0'],
-        ];
-
-        $chapterIds = Be::getTable('doc_chapter_category')
-            ->where('category_id', $categoryId)
-            ->getValues('chapter_id');
-        if (count($chapterIds) > 0) {
-            $filter[] = [
-                'id', 'NOT IN', $chapterIds
-            ];
+        try {
+            $chapter = Be::getService('App.Doc.Admin.Chapter')->addChapter($request->json());
+            $response->set('success', true);
+            $response->set('message', '新建文档成功！');
+            $response->set('chapter', $chapter);
+            $response->json();
+        } catch (\Throwable $t) {
+            $response->set('success', false);
+            $response->set('message', $t->getMessage());
+            $response->json();
         }
-
-        Be::getAdminPlugin('Curd')->setting([
-            'label' => '向项目 ' . $category->name . ' 添加章节',
-            'table' => 'doc_chapter',
-            'opLog' => false,
-            'grid' => [
-                'title' => '向项目 ' . $category->name . ' 添加章节',
-                'theme' => 'Blank',
-
-                'filter' => $filter,
-
-                'form' => [
-                    'items' => [
-                        [
-                            'name' => 'title',
-                            'label' => '章节标题',
-                        ],
-                    ],
-                ],
-
-                'tableToolbar' => [
-                    'items' => [
-                        [
-                            'label' => '添加到项目 ' . $category->name . ' 中',
-                            'url' => beAdminUrl('Doc.Project.addChapterSave', ['id' => $categoryId]),
-                            'target' => 'ajax',
-                            'ui' => [
-                                'icon' => 'el-icon-plus',
-                                'type' => 'primary'
-                            ]
-                        ],
-                    ]
-                ],
-
-                'table' => [
-
-                    'items' => [
-                        [
-                            'driver' => TableItemSelection::class,
-                            'width' => '50',
-                        ],
-                        [
-                            'name' => 'title',
-                            'label' => '章节标题',
-                            'align' => 'left',
-                        ],
-                    ],
-                ],
-            ],
-        ])->execute();
     }
 
     /**
-     * 指定项目下的章节 - 添加
+     * 保存文档
      *
-     * @BePermission("项目章节管理")
+     * @BePermission("项目文档管理")
      */
-    public function addChapterSave()
+    public function saveChapter()
     {
         $request = Be::getRequest();
         $response = Be::getResponse();
 
         try {
-            $categoryId = $request->get('id', '');
-            $selectedRows = $request->json('selectedRows');
-            if (!is_array($selectedRows) || count($selectedRows) == 0) {
-                throw new ControllerException('请选择章节！');
-            }
-
-            $chapterIds = [];
-            foreach ($selectedRows as $selectedRow) {
-                $chapterIds[] = $selectedRow['id'];
-            }
-
-            Be::getService('App.Doc.Admin.Project')->addChapter($categoryId, $chapterIds);
+            Be::getService('App.Doc.Admin.Chapter')->saveChapter($request->json('formData'));
             $response->set('success', true);
-            $response->set('message', '编辑项目成功！');
+            $response->set('message', '保存文档成功！');
             $response->set('callback', 'parent.closeDrawerAndReload();');
             $response->json();
         } catch (\Throwable $t) {
@@ -611,35 +438,20 @@ class Doc extends Auth
     }
 
     /**
-     * 指定项目下的章节 - 删除
+     * 删除文档
      *
-     * @BePermission("项目章节管理")
+     * @BePermission("项目文档管理")
      */
     public function deleteChapter()
     {
         $request = Be::getRequest();
         $response = Be::getResponse();
         try {
-            $categoryId = $request->get('id', '');
-            $chapterIds = [];
-            $postData = $request->json();
-            if (isset($postData['selectedRows'])) {
-                if (is_array($postData['selectedRows']) && count($postData['selectedRows']) > 0) {
-                    foreach ($postData['selectedRows'] as $selectedRow) {
-                        $chapterIds[] = $selectedRow['id'];
-                    }
-                }
-            } elseif (isset($postData['row'])) {
-                $chapterIds[] = $postData['row']['id'];
-            }
-
-            if (count($chapterIds) == 0) {
-                throw new ControllerException('请选择章节！');
-            }
-
-            Be::getService('App.Doc.Admin.Project')->deleteChapter($categoryId, $chapterIds);
+            $chapterId = $request->json('chapter_id', '');
+            $chapter = Be::getService('App.Doc.Admin.Chapter')->deleteChapter($chapterId);
             $response->set('success', true);
-            $response->set('message', '编辑项目成功！');
+            $response->set('message', '删除文档成功！');
+            $response->set('chapter', $chapter);
             $response->json();
         } catch (\Throwable $t) {
             $response->set('success', false);

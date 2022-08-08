@@ -1,0 +1,74 @@
+.el-form-item {
+    margin-bottom: inherit;
+}
+
+.el-form-item__content {
+    line-height: inherit;
+}
+
+.editormd {
+    margin-bottom: 0 !important;
+}
+
+.left-side {
+    position: fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    background-color: #fff;
+}
+
+.left-side-tree {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5px;
+    bottom: 30px;
+    overflow-y: auto;
+}
+
+.left-side-op {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 30px;
+}
+
+.el-tree,
+.el-tree-node__expand-icon {
+    color: #333;
+}
+.el-tree-node__content {
+    height: 30px;
+}
+
+.custom-tree-node {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 5px;
+    font-size: 16px;
+}
+
+#left-resize {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e1e1e1;
+    cursor: ew-resize;
+}
+
+#left-resize:hover,
+.left-resize-on {
+    background-color: #ccc !important;
+    width: 5px !important;
+    cursor: ew-resize !important;
+    z-index: 9;
+}
+
+.right-side {
+    padding-top: 10px;
+    padding-right: 10px;
+}
