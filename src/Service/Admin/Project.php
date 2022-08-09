@@ -31,6 +31,7 @@ class Project
         $project->seo_title_custom = (int)$project->seo_title_custom;
         $project->seo_description_custom = (int)$project->seo_description_custom;
         $project->ordering = (int)$project->ordering;
+        $project->chapter_toggle_editor = (int)$project->chapter_toggle_editor;
 
         return $project;
     }
@@ -137,6 +138,14 @@ class Project
             $data['seo_keywords'] = '';
         }
 
+        if (!isset($data['chapter_default_editor']) || !is_string($data['chapter_default_editor'])|| !in_array($data['chapter_default_editor'], ['markdown', 'tinymce'])) {
+            $data['chapter_default_editor'] = 'markdown';
+        }
+
+        if (!isset($data['chapter_toggle_editor']) || !is_numeric($data['chapter_default_editor']) || $data['chapter_default_editor'] !== 1) {
+            $data['chapter_toggle_editor'] = 1;
+        }
+
         if (!isset($data['ordering']) || !is_numeric($data['ordering'])) {
             $data['ordering'] = 0;
         }
@@ -152,6 +161,8 @@ class Project
             $tupleProject->seo_title_custom = $data['seo_title_custom'];
             $tupleProject->seo_description = $data['seo_description'];
             $tupleProject->seo_description_custom = $data['seo_description_custom'];
+            $tupleProject->chapter_default_editor = $data['chapter_default_editor'];
+            $tupleProject->chapter_toggle_editor = $data['chapter_toggle_editor'];
             $tupleProject->seo_keywords = $data['seo_keywords'];
             $tupleProject->ordering = $data['ordering'];
             $tupleProject->update_time = $now;

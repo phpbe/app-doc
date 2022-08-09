@@ -102,6 +102,29 @@
 
                     <div class="be-p-150 be-bc-fff">
                         <div class="be-row">
+                            <div class="be-col be-lh-250">文档默认编辑器：</div>
+                            <div class="be-col-auto">
+                                <el-form-item prop="chapter_default_editor">
+                                    <el-select v-model = "formData.chapter_default_editor" size="medium">
+                                        <el-option value="markdown" label="Markdown"></el-option>
+                                        <el-option value="tinymce" label="Tinymce"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </div>
+                        </div>
+                        <?php $formData['chapter_default_editor'] = ($this->project ? $this->project->chapter_default_editor : 'markdown'); ?>
+
+                        <div class="be-row be-mt-150">
+                            <div class="be-col ">文档是否可切换编辑器：</div>
+                            <div class="be-col-auto">
+                                <el-form-item prop="chapter_toggle_editor">
+                                    <el-switch v-model.number = "formData.chapter_toggle_editor" :active-value="1" :inactive-value="0" size="medium"></el-switch>
+                                </el-form-item>
+                            </div>
+                        </div>
+                        <?php $formData['chapter_toggle_editor'] = ($this->project ? $this->project->chapter_toggle_editor : 1); ?>
+
+                        <div class="be-row be-mt-150">
                             <div class="be-col be-lh-250">排序：</div>
                             <div class="be-col-auto">
                                 <el-form-item prop="ordering">

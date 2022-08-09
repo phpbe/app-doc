@@ -121,15 +121,13 @@ class Chapter
         }
         $ordering++;
 
-        $configChapter = Be::getConfig('App.Doc.Chapter');
-
         $tuple = Be::getTuple('doc_chapter');
         $tuple->project_id = $data['project_id'];
         $tuple->parent_id = $data['parent_id'];
         $tuple->title = $data['title'];
         $tuple->description = "\n\n";
         $tuple->description_markdown = "\n\n";
-        $tuple->editor = $configChapter->defaultEditor;
+        $tuple->editor = $tupleProject->chapter_default_editor;
         $tuple->url = $data['parent_id'] . '-' . $ordering;
         $tuple->url_custom = 0;
         $tuple->seo_title = $data['title'];
@@ -155,8 +153,6 @@ class Chapter
      */
     public function saveChapter(array $data): object
     {
-        $configChapter = Be::getConfig('App.Doc.Chapter');
-
         if (!isset($data['id']) || !is_string($data['id'])) {
             throw new ServiceException('参数（id）缺失!');
         }
@@ -209,7 +205,7 @@ class Chapter
         }
 
         if (!isset($data['editor']) || !is_string($data['editor'])) {
-            $data['editor'] = $configChapter->defaultEditor;
+            $data['editor'] = $tupleProject->chapter_default_editor;
         }
 
         if (!isset($data['url_custom']) || $data['url_custom'] !== 1) {
@@ -316,6 +312,53 @@ class Chapter
     }
 
     /**
+     * 项目文档排序
+     *
+     * @param array $data
+     */
+    public function sortChapter(array $data)
+    {
+        $db = Be::getDb();
+        $db->startTransaction();
+        try {
+            $i = 1;
+            foreach ($data as $x) {
+
+                if (!isset($x['id'])) {
+                    throw new ServiceException('第' . $i . '组数据的参数（id）缺失!');
+                }
+
+                if (!isset($x['ordering']) || !is_numeric($x['ordering'])) {
+                    throw new ServiceException('第' . $i . '组数据的参数（ordering）缺失!');
+                }
+
+                $tuple = Be::getTuple('doc_chapter');
+                try {
+                    $tuple->load($x['id']);
+                } catch (\Throwable $t) {
+                    throw new ServiceException('文档（#' . $x['id'] . '）不存在!');
+                }
+
+                if (isset($x['parent_id'])) {
+                    $tuple->parent_id = $x['parent_id'];
+                }
+
+                $tuple->ordering = $x['ordering'];
+                $tuple->update_time = date('Y-m-d H:i:s');
+                $tuple->update();
+
+                $i++;
+            }
+
+            $db->commit();
+        } catch (\Throwable $t) {
+            $db->rollback();
+
+            throw $t;
+        }
+    }
+
+    /**
      * 删除文档
      *
      * @param string $chapterId 文档ID
@@ -330,11 +373,11 @@ class Chapter
             throw new ServiceException('文档（#' . $chapterId . '）不存在!');
         }
 
-        if( Be::getTable('doc_chapter')
+        if (Be::getTable('doc_chapter')
                 ->where('project_id', $tuple->project_id)
                 ->where('parent_id', $chapterId)
                 ->where('is_delete', 0)
-            ->count() > 0) {
+                ->count() > 0) {
             throw new ServiceException('删除子文档后方可删除父文档!');
         }
 

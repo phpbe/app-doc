@@ -22,21 +22,6 @@ class Chapter
      */
     public int $autoSaveInterval = 15;
 
-    /**
-     * @BeConfigItem("默认编辑器",
-     *     description="启用后，文档变更将同步到ES搜索引擎，检索相关的功能将由ES接管",
-     *     driver="FormItemSwitch"
-     * )
-     */
-    public string $defaultEditor = 'markdown';
-
-    /**
-     * @BeConfigItem("单个文档是否可切换编辑器",
-     *     description="启用后，文档可单独控制编辑器",
-     *     driver="FormItemSwitch"
-     * )
-     */
-    public int $toggleEditor = 1;
 
 }
 

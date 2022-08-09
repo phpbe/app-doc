@@ -5,7 +5,7 @@
     <script src="<?php echo $wwwUrl; ?>/admin/js/pinyin.js"></script>
 
     <?php
-    if ($this->configChapter->toggleEditor || $this->configChapter->defaultEditor === 'tinymce') {
+    if ($this->project->chapter_toggle_editor || $this->project->chapter_default_editor === 'tinymce') {
         ?>
         <script src="<?php echo $wwwUrl; ?>/admin/js/turndown.js"></script>
         <script src="<?php echo $wwwUrl; ?>/admin/js/turndown-plugin-gfm.js"></script>
@@ -14,13 +14,6 @@
     ?>
 
     <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/admin/css/chapters.css">
-
-    <style>
-
-        .el-tree-node__content {
-            height: 30px;
-        }
-    </style>
 </be-head>
 
 
@@ -38,8 +31,8 @@
                         ref="chapterTree"
                         :data="chapterTree"
                         node-key="id"
-                        @node-click="editChapter"
-                        @node-drag-end="sortChapters"
+                        @node-click="(data) => editChapter(data.id)"
+                        @node-drag-end="sortChapter"
                         :expand-on-click-node="false"
                         default-expand-all
                         highlight-current
@@ -54,18 +47,18 @@
                               @click.stop="() => addChapter(data.id)">
                       </el-link>
                       <el-link
-                              type="primary"
+                              type="danger"
                               size="mini"
                               icon="el-icon-close"
                               :disabled="data.children.length > 0"
-                              @click.stop="() => deleteChapter(node, data)">
+                              @click.stop="() => deleteChapter(data.id)">
                       </el-link>
                     </span>
                   </span>
                 </el-tree>
             </div>
             <div class="left-side-op be-ta-center">
-                <el-link type="primary" icon="el-icon-plus" :underline="false" @click="addChapter('')">新建文档</el-link>
+                <el-button type="primary" size="mini" icon="el-icon-plus" @click="addChapter('')">新建文档</el-button>
             </div>
         </div>
 
@@ -102,7 +95,7 @@
                     </div>
 
                     <?php
-                    if ($this->configChapter->toggleEditor) {
+                    if ($this->project->chapter_toggle_editor) {
                         ?>
                         <div class="be-col-auto">
                             <div class="be-pl-200 be-pt-50">
@@ -124,13 +117,13 @@
 
                     <div class="be-col-auto">
                         <div class="be-pl-200">
-                            <el-button size="medium" type="primary" :disabled="loading" @click="saveChapter(false)">保存</el-button>
+                            <el-button size="medium" type="primary" :disabled="loading || formData.id === ''" @click="saveChapter(false)">保存</el-button>
                         </div>
                     </div>
                 </div>
 
                 <?php
-                if ($this->configChapter->toggleEditor || $this->configChapter->defaultEditor === 'tinymce') {
+                if ($this->project->chapter_toggle_editor || $this->project->chapter_default_editor === 'tinymce') {
                     $driver = new \Be\AdminPlugin\Form\Item\FormItemTinymce([
                         'name' => 'description',
                         'ui' => [
@@ -154,7 +147,7 @@
                     $uiItems->add($driver);
                 }
 
-                if ($this->configChapter->toggleEditor || $this->configChapter->defaultEditor === 'markdown') {
+                if ($this->project->chapter_toggle_editor || $this->project->chapter_default_editor === 'markdown') {
                     $driver = new \Be\AdminPlugin\Form\Item\FormItemMarkdown([
                         'name' => 'description_markdown',
                         'ui' => [
@@ -331,18 +324,10 @@
                                     children: []
                                 }, false);
 
-                                console.log(_this.$refs.chapterTree.getCurrentKey());
-
+                                // 选中新添加的文档
                                 _this.$nextTick(function (){
                                     _this.$refs.chapterTree.setCurrentKey(responseData.chapter.id);
                                 });
-
-                                console.log(_this.$refs.chapterTree.getCurrentKey());
-
-                                //_this.$refs.chapterTree.setCurrentNode(responseData.chapter.id);
-
-
-                                //_this.chapterTreeCurrentNodeKey = responseData.chapter.id;
 
                                 _this.formData = responseData.chapter;
                             } else {
@@ -383,30 +368,43 @@
 
                     return false;
                 },
-                editChapter(data) {
+                editChapter(chapterId) {
                     let _this = this;
                     _this.loading = true;
                     _this.$http.post("<?php echo beAdminUrl('Doc.Doc.getChapter'); ?>", {
-                        chapter_id: data.id
+                        chapter_id: chapterId
                     }).then(function (response) {
                         _this.loading = false;
                         if (response.status === 200) {
                             var responseData = response.data;
                             if (responseData.success) {
                                 _this.formData = responseData.chapter;
-                                <?php
-                                if ($this->configChapter->toggleEditor || $this->configChapter->defaultEditor === 'tinymce') {
-                                ?>
-                                _this.formItems.description.instance.setContent(_this.formData.description);
-                                <?php
+
+                                if (_this.formData.editor === 'tinymce') {
+                                    if (_this.formItems.description.instance) {
+                                        _this.formItems.description.instance.setContent(_this.formData.description);
+                                    } else {
+                                        let timerTinymce = setInterval(function () {
+                                            if (_this.formItems.description.instance) {
+                                                _this.formItems.description.instance.setContent(_this.formData.description);
+                                                clearInterval(timerTinymce)
+                                            }
+                                        }, 200);
+                                    }
                                 }
 
-                                if ($this->configChapter->toggleEditor || $this->configChapter->defaultEditor === 'markdown') {
-                                ?>
-                                _this.formItems.description_markdown.instance.setMarkdown(_this.formData.description_markdown);
-                                <?php
+                                if (_this.formData.editor === 'markdown') {
+                                    if (_this.formItems.description_markdown.instance) {
+                                        _this.formItems.description_markdown.instance.setMarkdown(_this.formData.description_markdown);
+                                    } else {
+                                        let timerMarkdown = setInterval(function () {
+                                            if (_this.formItems.description_markdown.instance) {
+                                                _this.formItems.description_markdown.instance.setMarkdown(_this.formData.description_markdown);
+                                                clearInterval(timerMarkdown)
+                                            }
+                                        }, 200);
+                                    }
                                 }
-                                ?>
                             } else {
                                 if (responseData.message) {
                                     _this.$message.error(responseData.message);
@@ -453,7 +451,7 @@
                         _this.$message.error(error);
                     });
                 },
-                deleteChapter(node, data) {
+                deleteChapter(chapterId) {
                     let _this = this;
                     _this.$confirm("确认要岫除么？", "删除确认", {
                         confirmButtonText: "确定",
@@ -462,7 +460,7 @@
                     }).then(function(){
                         _this.loading = true;
                         _this.$http.post("<?php echo beAdminUrl('Doc.Doc.deleteChapter'); ?>", {
-                            chapter_id: data.id
+                            chapter_id: chapterId
                         }).then(function (response) {
                             _this.loading = false;
                             if (response.status === 200) {
@@ -509,8 +507,69 @@
 
                     return false;
                 },
-                sortChapters(draggingNode, dropNode, dropType, ev) {
-                    console.log(draggingNode, dropNode, dropType, ev);
+                sortChapter(draggingNode, dropNode, dropType, ev) {
+
+                    let formData = [];
+
+                    if (dropType === "inner") {
+                        for(let i in dropNode.childNodes) {
+                            if (dropNode.childNodes[i].data.id  === draggingNode.data.id) {
+                                draggingNode.data.parent_id = dropNode.data.id;
+                                formData.push({
+                                    id: draggingNode.data.id,
+                                    parent_id: dropNode.data.id,
+                                    ordering: i
+                                });
+                            } else {
+                                formData.push({
+                                    id: dropNode.childNodes[i].data.id,
+                                    ordering: i
+                                });
+                            }
+                        }
+                    } else {
+                        // 目标节点所在组重新排序
+                        for(let i in dropNode.parent.childNodes) {
+                            if (dropNode.parent.childNodes[i].data.id  === draggingNode.data.id) {
+                                draggingNode.data.parent_id = dropNode.parent.data.id;
+
+                                formData.push({
+                                    id: draggingNode.data.id,
+                                    parent_id: dropNode.parent.level > 0 ? dropNode.parent.data.id : "",
+                                    ordering: i
+                                });
+                            } else {
+                                formData.push({
+                                    id: dropNode.parent.childNodes[i].data.id,
+                                    ordering: i
+                                });
+                            }
+                        }
+                    }
+
+                    let _this = this;
+                    _this.loading = true;
+                    _this.$http.post("<?php echo beAdminUrl('Doc.Doc.sortChapter'); ?>", {
+                        formData: formData
+                    }).then(function (response) {
+                        _this.loading = false;
+                        //console.log(response);
+                        if (response.status === 200) {
+                            var responseData = response.data;
+                            if (responseData.success) {
+                                //_this.$message.success(responseData.message);
+                            } else {
+                                if (responseData.message) {
+                                    _this.$message.error(responseData.message);
+                                } else {
+                                    _this.$message.error("服务器返回数据异常！");
+                                }
+                            }
+                        }
+                    }).catch(function (error) {
+                        _this.loading = false;
+                        _this.$message.error(error);
+                    });
                 },
                 getChapterTreeNode(chapterId, children = false) {
                     if (children === false) {
@@ -643,21 +702,43 @@
                     let width = document.documentElement.clientWidth - this.leftWidth - 20;
                     let height = Math.max(document.documentElement.clientHeight - 60, 300);
 
+                    let _this = this;
+
                     <?php
-                    if ($this->configChapter->toggleEditor || $this->configChapter->defaultEditor === 'tinymce') {
+                    if ($this->project->chapter_toggle_editor || $this->project->chapter_default_editor === 'tinymce') {
                     ?>
                     if (this.formData.editor === 'tinymce') {
-                        this.formItems.description.instance.settings.height = height;
-                        this.formItems.description.instance.settings.max_height = height;
-                        this.formItems.description.instance.settings.min_height = height;
+                        if (this.formItems.description.instance) {
+                            this.formItems.description.instance.settings.height = height;
+                            this.formItems.description.instance.settings.max_height = height;
+                            this.formItems.description.instance.settings.min_height = height;
+                        } else {
+                            let timerTinymce = setInterval(function () {
+                                if (_this.formItems.description.instance) {
+                                    _this.formItems.description.instance.settings.height = height;
+                                    _this.formItems.description.instance.settings.max_height = height;
+                                    _this.formItems.description.instance.settings.min_height = height;
+                                    clearInterval(timerTinymce)
+                                }
+                            }, 200);
+                        }
                     }
                     <?php
                     }
 
-                    if ($this->configChapter->toggleEditor || $this->configChapter->defaultEditor === 'markdown') {
+                    if ($this->project->chapter_toggle_editor || $this->project->chapter_default_editor === 'markdown') {
                     ?>
                     if (this.formData.editor === 'markdown') {
-                        this.formItems.description_markdown.instance.resize(width, height);
+                        if (this.formItems.description_markdown.instance) {
+                            this.formItems.description_markdown.instance.resize(width, height);
+                        } else {
+                            let timerMarkdown = setInterval(function () {
+                                if (_this.formItems.description_markdown.instance) {
+                                    _this.formItems.description_markdown.instance.resize(width, height);
+                                    clearInterval(timerMarkdown)
+                                }
+                            }, 200);
+                        }
                     }
                     <?php
                     }
@@ -671,7 +752,7 @@
                         title: "",
                         description: "",
                         description_markdown: "",
-                        editor: "<?php echo $this->configChapter->defaultEditor ?>",
+                        editor: "<?php echo $this->project->chapter_default_editor ?>",
                         is_enable: 0,
                         seo_title: "",
                         seo_title_custom: 0,
@@ -695,6 +776,21 @@
                     <?php
                     }
                     ?>
+                },
+                autoLoad() {
+                    if (this.chapterTree.length > 0) {
+
+                        let chapterId = this.chapterTree[0].id;
+
+                        this.editChapter(chapterId);
+
+                        let _this = this;
+
+                        // 选中新添加的文档
+                        _this.$nextTick(function (){
+                            _this.$refs.chapterTree.setCurrentKey(chapterId);
+                        });
+                    }
                 }
                 <?php
                 echo $uiItems->getVueMethods();
@@ -703,12 +799,11 @@
             <?php
             $uiItems->setVueHook('created', '
                 this.initFormData();
+                this.autoLoad();
                 this.autoSave();
             ');
 
             $uiItems->setVueHook('mounted', '
-                window.onbeforeunload = function(e) {e = e || window.event; if (e) { e.returnValue = ""; } return ""; };
-
                 this.resizeLeft();
 
                 let _thisResizeRight = this;

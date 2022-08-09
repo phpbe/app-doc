@@ -3,6 +3,7 @@
 namespace Be\App\Doc\Controller\Admin;
 
 use Be\AdminPlugin\Detail\Item\DetailItemHtml;
+use Be\AdminPlugin\Detail\Item\DetailItemSwitch;
 use Be\AdminPlugin\Table\Item\TableItemImage;
 use Be\AdminPlugin\Table\Item\TableItemLink;
 use Be\AdminPlugin\Table\Item\TableItemSelection;
@@ -201,6 +202,15 @@ class Doc extends Auth
                         [
                             'name' => 'seo_keywords',
                             'label' => 'SEO 关键词',
+                        ],
+                        [
+                            'name' => 'chapter_default_editor',
+                            'label' => '文档默认编辑器',
+                        ],
+                        [
+                            'name' => 'chapter_toggle_editor',
+                            'label' => '文档是否可切换编辑器',
+                            'driver' => DetailItemSwitch::class,
                         ],
                         [
                             'name' => 'ordering',
@@ -428,7 +438,6 @@ class Doc extends Auth
             Be::getService('App.Doc.Admin.Chapter')->saveChapter($request->json('formData'));
             $response->set('success', true);
             $response->set('message', '保存文档成功！');
-            $response->set('callback', 'parent.closeDrawerAndReload();');
             $response->json();
         } catch (\Throwable $t) {
             $response->set('success', false);
@@ -436,6 +445,29 @@ class Doc extends Auth
             $response->json();
         }
     }
+
+    /**
+     * 文档排序
+     *
+     * @BePermission("项目文档管理")
+     */
+    public function sortChapter()
+    {
+        $request = Be::getRequest();
+        $response = Be::getResponse();
+
+        try {
+            Be::getService('App.Doc.Admin.Chapter')->sortChapter($request->json('formData'));
+            $response->set('success', true);
+            $response->set('message', '文档排序成功！');
+            $response->json();
+        } catch (\Throwable $t) {
+            $response->set('success', false);
+            $response->set('message', $t->getMessage());
+            $response->json();
+        }
+    }
+
 
     /**
      * 删除文档
