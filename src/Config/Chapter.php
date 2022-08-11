@@ -22,7 +22,6 @@ class Chapter
      */
     public int $autoSaveInterval = 15;
 
-
     /**
      * @BeConfigItem("文章详情页文字大小",
      *     driver="FormItemSelect",
@@ -38,6 +37,20 @@ class Chapter
      * )
      */
     public string $detailLineHeight = '200';
+
+    /**
+     * @BeConfigItem("粘性菜单上边距（px）",
+     *     driver="FormItemInputNumberInt"
+     * )
+     */
+    public int $stickyMenuTopOffset = 30;
+
+    /**
+     * @BeConfigItem("粘性菜单下边距（px）",
+     *     driver="FormItemInputNumberInt"
+     * )
+     */
+    public int $stickyMenuBottomOffset = 30;
 
 }
 

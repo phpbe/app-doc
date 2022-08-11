@@ -38,6 +38,9 @@ class Doc
 
             $serviceChapter = Be::getService('App.Doc.Chapter');
             $chapterTree =  $serviceChapter->getChapterTree($project->id);
+            if (count($chapterTree) === 0) {
+                throw new ControllerException('该项目下暂无文档！');
+            }
             $response->set('chapterTree', $chapterTree);
 
             $flatChapterTree =  $serviceChapter->getFlatChapterTree($project->id);
@@ -50,6 +53,11 @@ class Doc
             $configChapter = Be::getConfig('App.Doc.Chapter');
             $response->set('configChapter', $configChapter);
 
+            $chapter = $chapterTree[0];
+
+            $serviceChapter = Be::getService('App.Doc.Chapter');
+            $chapter = $serviceChapter->hit($chapter->id);
+            $response->set('chapter', $chapter);
 
             $response->display('App.Doc.Doc.chapter');
         } catch (\Throwable $t) {

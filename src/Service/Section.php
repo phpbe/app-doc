@@ -41,7 +41,7 @@ class Section
      */
     public function makeDocMenu(array $chapterTree, array $openNodeIds, string $chapterId, int $level = 0): string
     {
-        $html = '<ul>';
+        $html = '<ul class="doc-menu-ul">';
         foreach ($chapterTree as $chapter) {
             $childrenCount = count($chapter->children);
 

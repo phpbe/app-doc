@@ -1,3 +1,244 @@
+
+.doc-container {
+
+}
+
+.doc-menu-container {
+    width: 300px;
+}
+
+.doc-menu {
+    position: relative;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+    /*height: 100vh;*/
+    overflow-y: auto;
+    background-color: #fafafa;
+    user-select: none;
+}
+
+.doc-menu-toggle-container {
+    width: 2rem;
+}
+
+.doc-menu-toggle {
+    width: 2rem;
+    /*height: 100vh;*/
+    position: relative;
+    top: 0;
+    bottom: 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+.doc-menu-toggle-on,
+.doc-menu-toggle-off {
+    width: 1rem;
+    height: 5rem;
+    margin: 0 .5rem;
+    line-height: 5rem;
+    background-color: #f5f5f5;
+    position: absolute;
+    top: calc(50% - 2.5rem);
+    cursor: pointer;
+}
+
+.doc-menu-toggle-on svg,
+.doc-menu-toggle-off svg {
+    width: 1rem;
+    height: 1rem;
+    vertical-align: middle;
+    color: #999;
+}
+
+
+.doc-menu-toggle-on:hover,
+.doc-menu-toggle-off:hover {
+    background-color: var(--main-color-9);
+}
+
+.doc-menu-toggle-on:hover svg,
+.doc-menu-toggle-off:hover svg {
+    color: var(--main-color);
+}
+
+.doc-menu-toggle-on {
+    display: none;
+}
+
+.doc-menu-toggle-off {
+    display: block;
+}
+
+.doc-menu-off .doc-menu-container {
+    display: none;
+}
+
+.doc-menu-off .doc-menu-toggle-on {
+    display: block;
+}
+
+.doc-menu-off .doc-menu-toggle-off {
+    display: none;
+}
+
+.doc-menu-title {
+    font-weight: bold;
+    padding: .5rem 1rem;
+    background-color: #eee;
+    margin-bottom: .5rem;
+}
+
+.doc-menu .menu-label {
+    padding-right: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.doc-menu .menu-active > .menu-label {
+    background-color: var(--main-color-8);
+    color: var(--main-color);
+}
+
+.doc-menu .menu-label:hover {
+    background-color: var(--main-color-9);
+    color: var(--main-color);
+}
+
+.doc-menu .menu-active .menu-label:hover {
+    background-color: var(--main-color-8);
+}
+
+.doc-menu .menu-label a {
+    flex: 1;
+    color: #666;
+    text-decoration: none;
+}
+
+.doc-menu .menu-label a:hover {
+    color: var(--main-color);
+}
+
+.doc-menu .menu-active > .menu-label a {
+    color: var(--main-color);
+}
+
+.doc-menu .icon {
+    flex: 0 0 1rem;
+    width: 1rem;
+    height: 1rem;
+    line-height: 1rem;
+    vertical-align: middle;
+    margin: .5rem;
+}
+
+.doc-menu .icon-open {
+    border-left: .5em solid transparent;
+    border-right: .5em solid transparent;
+    border-top: .5em solid #999;
+    border-bottom: .5em solid transparent;
+    margin: .5rem .5rem 0 .5rem;
+    cursor: pointer;
+}
+
+.doc-menu .menu-active > .menu-label .icon-open {
+    border-top: .5em solid var(--main-color-2);
+}
+
+.doc-menu .icon-open:hover,
+.doc-menu .menu-active > .menu-label .icon-open:hover {
+    border-top: .5em solid var(--main-color);
+}
+
+
+.doc-menu .icon-close {
+    border-left: .5em solid #999;
+    border-right: .5em solid transparent;
+    border-top: .5em solid transparent;
+    border-bottom: .5em solid transparent;
+    margin: 0 0 0 1rem;
+    cursor: pointer;
+}
+
+.doc-menu .menu-active > .menu-label .icon-close {
+    border-left: .5em solid var(--main-color-2);
+}
+
+.doc-menu .icon-close:hover,
+.doc-menu .menu-active > .menu-label .icon-close:hover {
+    border-left: .5em solid var(--main-color);
+}
+
+.doc-menu .menu-close ul {
+    display: none;
+}
+
+.doc-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.doc-menu li {
+    line-height: 2rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+
+.doc-content-container {
+}
+
+.doc-content {
+}
+
+.doc-content h4 {
+    margin: .5rem 0;
+}
+
+.doc-content hr {
+    border: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+
+@media (max-width: 992px) {
+    .doc-menu-container {
+        display: none;
+    }
+
+    .doc-menu-toggle-on {
+        display: block;
+    }
+
+    .doc-menu-toggle-off {
+        display: none;
+    }
+
+    .doc-menu-on .doc-menu-toggle-on {
+        display: none;
+    }
+
+    .doc-menu-on .doc-menu-toggle-off {
+        display: block;
+    }
+
+    .doc-menu-on .doc-menu-container {
+        display: block;
+        width: calc(100% - 2rem);
+    }
+
+    .doc-menu-on .doc-menu {
+        width: 100%;
+    }
+
+    .doc-menu-on .doc-content-container {
+        display: none;
+    }
+}
+
+
 .copy-code {
     position: relative;
 }
