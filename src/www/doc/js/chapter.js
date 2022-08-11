@@ -99,10 +99,7 @@ $(function () {
 				docMenuFixed = false;
 			}
 
-			if (scrollTop < docMenuPosition1) {
-				$docMenu.css({transform: ''});
-				$docMenuToggle.css({transform: ''});
-			} else  {
+			if (scrollTop > docMenuPosition2) {
 				$docMenu.css({transform: 'translateY(' + (docMenuPosition2 - docMenuPosition1) + 'px)'});
 				$docMenuToggle.css({transform: 'translateY(' + (docMenuPosition2 - docMenuPosition1) + 'px)'});
 			}
