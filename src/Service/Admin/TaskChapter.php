@@ -187,7 +187,7 @@ class TaskChapter
         foreach ($chapters as $chapter) {
             if ($chapter->parent_id === $parentId) {
                 $chapter->children = $this->createChapterTree($projectId, $chapters, $chapter->id);
-                $chapter->url = $rootUrl . '/' . $projectUrl . '/' . $chapter->url;
+                $chapter->url = $rootUrl . '/doc/' . $projectUrl . '/' . $chapter->url;
                 $children[] = $chapter;
             }
         }
