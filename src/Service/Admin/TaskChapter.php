@@ -160,8 +160,8 @@ class TaskChapter
     private function getChapterTree(string $projectId): array
     {
         $db = Be::getDb();
-        $chapters = $db->getObjects('SELECT id, parent_id, title FROM doc_chapter WHERE project_id=\'' . $projectId . '\' AND is_enable=1 AND is_delete=0 ORDER BY ordering ASC');
-        return $this->createChapterTree($chapters);
+        $chapters = $db->getObjects('SELECT id, parent_id, title, url FROM doc_chapter WHERE project_id=\'' . $projectId . '\' AND is_enable=1 AND is_delete=0 ORDER BY ordering ASC');
+        return $this->createChapterTree($projectId, $chapters);
     }
 
     /**
@@ -171,16 +171,27 @@ class TaskChapter
      * @param string $parentId
      * @return array
      */
-    private function createChapterTree(array $chapters, string $parentId = '')
+    private function createChapterTree(string $projectId, array $chapters, string $parentId = '')
     {
+        $configSystem = Be::getConfig('App.System.System');
+        if ($configSystem->rootUrl === '') {
+            $rootUrl = '';
+        } else {
+            $rootUrl = $configSystem->rootUrl;
+        }
+
+        $sql = 'SELECT url FROM doc_project WHERE id=?';
+        $projectUrl = Be::getDb()->getValue($sql, [$projectId]);
+
         $children = [];
         foreach ($chapters as $chapter) {
             if ($chapter->parent_id === $parentId) {
-                $chapter->children = $this->createChapterTree($chapters, $chapter->id);
-                $chapter->url = beUrl('Doc.Doc.chapter', ['id' => $chapter->id]);
+                $chapter->children = $this->createChapterTree($projectId, $chapters, $chapter->id);
+                $chapter->url = $rootUrl . '/doc/' . $projectUrl . '/' . $chapter->url;
                 $children[] = $chapter;
             }
         }
+
         return $children;
     }
 

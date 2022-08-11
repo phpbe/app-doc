@@ -270,6 +270,8 @@ class Chapter
         $tuple->update_time = date('Y-m-d H:i:s');
         $tuple->update();
 
+        $url = beUrl('Doc.Doc.chapter', ['id' => $data['id']]);
+
         Be::getService('App.System.Task')->trigger('Doc.ChapterSyncEsAndCache');
 
         return $tuple->toObject();
