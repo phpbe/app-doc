@@ -33,7 +33,7 @@ class Project
         $key = 'Doc:Project:' . $projectId;
         $project = $cache->get($key);
         if (!$project) {
-            throw new ServiceException('项目不存在！');
+            throw new ServiceException('项目（#' . $projectId . '）不存在！');
         }
 
         return $project;

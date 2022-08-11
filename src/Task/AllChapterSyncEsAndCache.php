@@ -20,12 +20,18 @@ class AllChapterSyncEsAndCache extends Task
 
         $db = Be::getDb();
         $sql = 'SELECT * FROM doc_chapter WHERE is_enable != -1';
-        $blogs = $db->getYieldObjects($sql);
+        $chapters = $db->getYieldObjects($sql);
+
+        $projectIds = [];
 
         $batch = [];
         $i = 0;
-        foreach ($blogs as $blog) {
-            $batch[] = $blog;
+        foreach ($chapters as $chapter) {
+            $batch[] = $chapter;
+
+            if (!in_array($chapter->project_id, $projectIds)) {
+                $projectIds[] = $chapter->project_id;
+            }
 
             $i++;
             if ($i >= 100) {
@@ -46,6 +52,10 @@ class AllChapterSyncEsAndCache extends Task
             }
 
             $service->syncCache($batch);
+        }
+
+        if (count($projectIds) > 0) {
+            $service->syncCacheChapterTree($projectIds);
         }
 
     }

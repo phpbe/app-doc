@@ -23,5 +23,21 @@ class Chapter
     public int $autoSaveInterval = 15;
 
 
+    /**
+     * @BeConfigItem("文章详情页文字大小",
+     *     driver="FormItemSelect",
+     *     keyValues = "return ['100' => '1rem', '110' => '1.1rem', '120' => '1.2rem', '125' => '1.25rem', '150' => '1.5rem', '175' => '1.75rem', '200' => '2rem'];")
+     * )
+     */
+    public string $detailFontSize = '110';
+
+    /**
+     * @BeConfigItem("文章详情页行高",
+     *     driver="FormItemSelect",
+     *     keyValues = "return ['150' => '1.5rem', '175' => '1.75rem', '200' => '2rem', '250' => '2.5rem', '300' => '3rem', '400' => '4rem'];")
+     * )
+     */
+    public string $detailLineHeight = '200';
+
 }
 

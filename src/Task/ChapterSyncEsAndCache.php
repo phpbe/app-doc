@@ -39,12 +39,18 @@ class ChapterSyncEsAndCache extends TaskInterval
         $service = Be::getService('App.Doc.Admin.TaskChapter');
         $db = Be::getDb();
         $sql = 'SELECT * FROM doc_chapter WHERE is_enable != -1 AND update_time >= ? AND update_time < ?';
-        $blogs = $db->getYieldObjects($sql, [$d1, $d2]);
+        $chapters = $db->getYieldObjects($sql, [$d1, $d2]);
+
+        $productIds = [];
 
         $batch = [];
         $i = 0;
-        foreach ($blogs as $blog) {
-            $batch[] = $blog;
+        foreach ($chapters as $chapter) {
+            $batch[] = $chapter;
+
+            if (in_array($chapter->project_id, $productIds)) {
+                $productIds[] = $chapter->project_id;
+            }
 
             $i++;
             if ($i >= 100) {
@@ -65,6 +71,10 @@ class ChapterSyncEsAndCache extends TaskInterval
             }
 
             $service->syncCache($batch);
+        }
+
+        if (count($productIds) > 0) {
+            $service->syncCacheChapterTree($productIds);
         }
 
         $this->breakpoint = $d2;

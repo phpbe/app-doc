@@ -32,6 +32,7 @@ class Chapter
         $chagpter->seo_description_custom = (int)$chagpter->seo_description_custom;
         $chagpter->ordering = (int)$chagpter->ordering;
         $chagpter->hits = (int)$chagpter->hits;
+        $chagpter->is_enable = (int)$chagpter->is_enable;
 
         return $chagpter;
     }
@@ -175,23 +176,6 @@ class Chapter
             throw new ServiceException('项目（#' . $data['project_id'] . '）不存在!');
         }
 
-        if (!isset($data['parent_id']) || !is_string($data['parent_id'])) {
-            $data['parent_id'] = '';
-        }
-
-        if ($data['parent_id'] !== '') {
-            $tupleParent = Be::getTuple('doc_chapter');
-            try {
-                $tupleParent->load($data['parent_id']);
-            } catch (\Throwable $t) {
-                throw new ServiceException('父文档（#' . $data['parent_id'] . '）不存在!');
-            }
-
-            if ($tupleParent->project_id !== $data['project_id']) {
-                throw new ServiceException('父文档（#' . $data['parent_id'] . '）不需于当前项目!');
-            }
-        }
-
         if (!isset($data['title']) || !is_string($data['title'])) {
             $data['title'] = '未填写';
         }
@@ -245,11 +229,6 @@ class Chapter
         } while ($urlExist);
         $url = $urlUnique;
 
-
-        if (!isset($data['image']) || !is_string($data['image'])) {
-            $data['image'] = '';
-        }
-
         if (!isset($data['seo_title']) || !is_string($data['seo_title'])) {
             $data['seo_title'] = $data['title'];
         }
@@ -274,23 +253,7 @@ class Chapter
             $data['is_enable'] = 0;
         }
 
-        if (!isset($data['ordering']) || !is_numeric($data['ordering'])) {
-            $ordering = Be::getTable('doc_chapter')
-                ->where('project_id', $data['project_id'])
-                ->where('parent_id', $data['parent_id'])
-                ->max('ordering');
-            if ($ordering === null) {
-                $ordering = 0;
-            } else {
-                $ordering = (int)$ordering;
-            }
-            $ordering++;
-
-            $data['ordering'] = $ordering;
-        }
-
         $tuple->project_id = $data['project_id'];
-        $tuple->parent_id = $data['parent_id'];
         $tuple->title = $data['title'];
         $tuple->description = $data['description'];
         $tuple->description_markdown = $data['description_markdown'];
@@ -302,11 +265,12 @@ class Chapter
         $tuple->seo_description = $data['seo_description'];
         $tuple->seo_description_custom = $data['seo_description_custom'];
         $tuple->seo_keywords = $data['seo_keywords'];
-        $tuple->ordering = $data['ordering'];
         $tuple->is_enable = $data['is_enable'];
         $tuple->is_delete = 0;
         $tuple->update_time = date('Y-m-d H:i:s');
         $tuple->update();
+
+        Be::getService('App.System.Task')->trigger('Doc.ChapterSyncEsAndCache');
 
         return $tuple->toObject();
     }
@@ -356,6 +320,8 @@ class Chapter
 
             throw $t;
         }
+
+        Be::getService('App.System.Task')->trigger('Doc.ChapterSyncEsAndCache');
     }
 
     /**
@@ -385,6 +351,8 @@ class Chapter
         $tuple->is_delete = 1;
         $tuple->update_time = date('Y-m-d H:i:s');
         $tuple->update();
+
+        Be::getService('App.System.Task')->trigger('Doc.ChapterSyncEsAndCache');
 
         return true;
     }

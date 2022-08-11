@@ -112,7 +112,76 @@ class TaskChapter
         if (count($keyValues) > 0) {
             $cache->setMany($keyValues);
         }
+    }
 
+    public function syncCacheChapterTree(array $projectIds = [])
+    {
+        $cache = Be::getCache();
+        foreach ($projectIds as $projectId) {
+            $key = 'Doc:ChapterTree:' . $projectId;
+            $chapterTree = $this->getChapterTree($projectId);
+            $cache->set($key, $chapterTree);
+
+            $key = 'Doc:FlatChapterTree:' . $projectId;
+            $flatChapterTree = [];
+            $this->makeFlatChapterTree($chapterTree, $flatChapterTree, 1);
+            $cache->set($key, $flatChapterTree);
+        }
+    }
+
+    /**
+     * 生成平面树
+     */
+    private function makeFlatChapterTree(array $children, array &$flatChapterTree, int $level)
+    {
+        foreach ($children as $chapter) {
+
+            $subChildren = $chapter->children;
+            unset($chapter->children);
+
+            $childrenCount = count($subChildren);
+
+            $chapter->children_count = $childrenCount;
+            $chapter->level = $level;
+
+            $flatChapterTree[] = $chapter;
+
+            if ($childrenCount > 0) {
+                $this->makeFlatChapterTree($subChildren, $flatChapterTree, $level+1);
+            }
+        }
+    }
+
+    /**
+     * 获取章节树
+     * @param string $projectId
+     * @return void
+     */
+    private function getChapterTree(string $projectId): array
+    {
+        $db = Be::getDb();
+        $chapters = $db->getObjects('SELECT id, parent_id, title FROM doc_chapter WHERE project_id=\'' . $projectId . '\' AND is_enable=1 AND is_delete=0 ORDER BY ordering ASC');
+        return $this->createChapterTree($chapters);
+    }
+
+    /**
+     * 生成章节树
+     *
+     * @param array $chapters
+     * @param string $parentId
+     * @return array
+     */
+    private function createChapterTree(array $chapters, string $parentId = '')
+    {
+        $children = [];
+        foreach ($chapters as $chapter) {
+            if ($chapter->parent_id === $parentId) {
+                $chapter->children = $this->createChapterTree($chapters, $chapter->id);
+                $chapter->url = beUrl('Doc.Doc.chapter', ['id' => $chapter->id]);
+                $children[] = $chapter;
+            }
+        }
+        return $children;
     }
 
 

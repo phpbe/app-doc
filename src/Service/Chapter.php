@@ -22,49 +22,45 @@ class Chapter
         $key = 'Doc:Chapter:' . $chapterId;
         $chapter = $cache->get($key);
         if (!$chapter) {
-            throw new ServiceException('文档不存在！');
+            throw new ServiceException('文档（#' . $chapterId . '）不存在！');
         }
 
         return $chapter;
     }
 
     /**
-     * 获取文档
-     *
-     * @param string $chapterId 文档ID
-     * @return object 文档对象
-     * @throws ServiceException
-     */
-    public function getChapterFromDb(string $chapterId): object
-    {
-        $db = Be::getDb();
-
-        $sql = 'SELECT * FROM `doc_chapter` WHERE id=?';
-        $chapter = $db->getObject($sql, [$chapterId]);
-        if (!$chapter) {
-            throw new ServiceException('文档不存在！');
-        }
-
-        $chapter->url_custom = (int)$chapter->url_custom;
-        $chapter->seo_title_custom = (int)$chapter->seo_title_custom;
-        $chapter->seo_description_custom = (int)$chapter->seo_description_custom;
-        $chapter->ordering = (int)$chapter->ordering;
-        $chapter->is_enable = (int)$chapter->is_enable;
-        $chapter->is_delete = (int)$chapter->is_delete;
-
-        return $chapter;
-    }
-
-    /**
-     * 获取章节树
+     * 获取文档树
      * @param string $projectId
-     * @return void
+     * @return array
      */
     public function getChapterTree(string $projectId): array
     {
+        $cache = Be::getCache();
 
+        $key = 'Doc:ChapterTree:' . $projectId;
+        if (!$cache->has($key)) {
+            return [];
+        }
+
+        return $cache->get($key);
     }
 
+    /**
+     * 获取文档树
+     * @param string $projectId
+     * @return array
+     */
+    public function getFlatChapterTree(string $projectId): array
+    {
+        $cache = Be::getCache();
+
+        $key = 'Doc:FlatChapterTree:' . $projectId;
+        if (!$cache->has($key)) {
+            return [];
+        }
+
+        return $cache->get($key);
+    }
 
     /**
      * 查看文档并更新点击
@@ -376,7 +372,7 @@ class Chapter
     public function getChapterUrl(array $params = []): string
     {
         $chapter = $this->getChapter($params['id']);
-        $project = $this->getChapter($chapter->project_id);
+        $project = Be::getService('App.Doc.Project')->getProject($chapter->project_id);
         return '/doc/' . $project->url . '/' . $chapter->url;
     }
 
