@@ -24,7 +24,7 @@ CREATE TABLE `doc_chapter` (
 CREATE TABLE `doc_project` (
 `id` varchar(36) NOT NULL DEFAULT 'uuid()' COMMENT 'UUID',
 `title` varchar(120) NOT NULL DEFAULT '' COMMENT '标题',
-`description` varchar(500) NOT NULL DEFAULT '' COMMENT '描述',
+`description` mediumtext NOT NULL COMMENT '描述',
 `url` varchar(200) NOT NULL DEFAULT '' COMMENT '网址',
 `url_custom` tinyint(4) NOT NULL DEFAULT '0' COMMENT '网址是否启用自定义',
 `seo_title` varchar(120) NOT NULL DEFAULT '' COMMENT 'SEO标题',
@@ -39,7 +39,6 @@ CREATE TABLE `doc_project` (
 `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分类';
-
 
 ALTER TABLE `doc_chapter`
 ADD PRIMARY KEY (`id`),
