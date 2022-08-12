@@ -9,6 +9,11 @@ use Be\Util\Str\Pinyin;
 class Project
 {
 
+    public function getIdTitleKeyValues()
+    {
+        $sql = 'SELECT id, title FROM doc_project WHERE is_delete = 0';
+        return Be::getDb()->getKeyValues($sql);
+    }
 
     /**
      * 获取项目
@@ -138,7 +143,7 @@ class Project
             $data['seo_keywords'] = '';
         }
 
-        if (!isset($data['chapter_default_editor']) || !is_string($data['chapter_default_editor'])|| !in_array($data['chapter_default_editor'], ['markdown', 'tinymce'])) {
+        if (!isset($data['chapter_default_editor']) || !is_string($data['chapter_default_editor']) || !in_array($data['chapter_default_editor'], ['markdown', 'tinymce'])) {
             $data['chapter_default_editor'] = 'markdown';
         }
 
@@ -217,8 +222,8 @@ class Project
                 }
 
                 Be::getTable('doc_chapter')
-                    ->where('project_id',  $projectId)
-                    ->update(['is_delete' => 0, 'update_time' =>  $now]);
+                    ->where('project_id', $projectId)
+                    ->update(['is_delete' => 0, 'update_time' => $now]);
 
                 $tupleProject->url = $projectId;
                 $tupleProject->is_delete = 1;
@@ -244,10 +249,11 @@ class Project
      *
      * @return array
      */
-    public function getProjectMenuPicker():array
+    public function getProjectMenuPicker(): array
     {
         return [
-            'name' => 'id',
+            'name' => 'project_id',
+            'field' => 'id',
             'value' => '项目：{title}',
             'table' => 'doc_project',
             'grid' => [
@@ -292,5 +298,4 @@ class Project
             ]
         ];
     }
-
 }

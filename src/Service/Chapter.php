@@ -371,9 +371,90 @@ class Chapter
      */
     public function getChapterUrl(array $params = []): string
     {
-        $chapter = $this->getChapter($params['id']);
+        $chapter = $this->getChapter($params['chapter_id']);
         $project = Be::getService('App.Doc.Project')->getProject($chapter->project_id);
         return '/doc/' . $project->url . '/' . $chapter->url;
+    }
+
+
+    /**
+     * 获取文档树菜单
+     *
+     * @param array $chapterTree
+     * @param array $flatChapterTree
+     * @param object $chapter
+     * @return string
+     */
+    public function getChapterTreeMenu(array $chapterTree, array $flatChapterTree, object $chapter): string
+    {
+        $parentIdMapping = [];
+        foreach ($flatChapterTree as $x) {
+            $parentIdMapping[$x->id] = $x->parent_id;
+        }
+
+        $openNodeIds = [];
+        $parentId = $chapter->parent_id;
+        while ($parentId !== '') {
+            $openNodeIds[] = $parentId;
+            $parentId = $parentIdMapping[$parentId] ?? '';
+        }
+
+        return $this->makeChapterTreeMenu($chapterTree, $openNodeIds, $chapter->id, 0);
+    }
+
+    /**
+     * 生成文档树菜单
+     *
+     * @param array $chapterTree
+     * @param array $openNodeIds
+     * @param string $chapterId
+     * @param int $level
+     * @return string
+     */
+    public function makeChapterTreeMenu(array $chapterTree, array $openNodeIds, string $chapterId, int $level = 0): string
+    {
+        $html = '<ul class="doc-menu-ul">';
+        foreach ($chapterTree as $chapter) {
+            $childrenCount = count($chapter->children);
+
+            $html .= '<li class="';
+            if ($childrenCount > 0) {
+                $html .= in_array($chapter->id, $openNodeIds) ? ' menu-open' : ' menu-close';
+            }
+
+            if ($chapterId === $chapter->id) {
+                $html .= ' menu-active';
+            }
+
+            $html .= '" id="node-' . $chapter->id . '" data-id="' . $chapter->id . '">';
+
+            $html .= '<div class="menu-label"';
+            if ($level > 0) {
+                $html .= 'style="padding-left: ' . $level . 'rem"';
+            }
+            $html .= '>';
+
+            $html .= '<i class="icon';
+            if ($childrenCount > 0) {
+                $html .= in_array($chapter->id, $openNodeIds) ? ' icon-open' : ' icon-close';
+            }
+            $html .= '"></i>';
+
+            $html .= '<a href="' . $chapter->url . '">';
+            $html .= $chapter->title;
+            $html .= '</a>';
+
+            $html .= '</div>';
+
+            if ($childrenCount > 0) {
+                $html .= $this->makeChapterTreeMenu($chapter->children, $openNodeIds, $chapterId, $level + 1);
+            }
+
+            $html .= '</li>';
+        }
+        $html .= '</ul>';
+
+        return $html;
     }
 
 

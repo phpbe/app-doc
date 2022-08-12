@@ -5,15 +5,15 @@
     <script src="<?php echo $wwwUrl; ?>/admin/js/pinyin.js"></script>
 
     <?php
-    if ($this->project->chapter_toggle_editor || $this->project->chapter_default_editor === 'tinymce') {
+    if ($this->project->chapter_toggle_editor || $this->project->chapter_default_editor === 'markdown') {
         ?>
-        <script src="<?php echo $wwwUrl; ?>/admin/js/turndown.js"></script>
-        <script src="<?php echo $wwwUrl; ?>/admin/js/turndown-plugin-gfm.js"></script>
+        <script src="<?php echo $wwwUrl; ?>/lib/turndown/turndown.js"></script>
+        <script src="<?php echo $wwwUrl; ?>/lib/turndown/turndown-plugin-gfm.js"></script>
         <?php
     }
     ?>
 
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/admin/css/chapters.css">
+    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/admin/css/chapter/chapters.css">
 </be-head>
 
 
@@ -44,7 +44,7 @@
                               type="primary"
                               size="mini"
                               icon="el-icon-plus"
-                              @click.stop="() => addChapter(data.id)">
+                              @click.stop="() => createChapter(data.id)">
                       </el-link>
                       <el-link
                               type="danger"
@@ -58,7 +58,7 @@
                 </el-tree>
             </div>
             <div class="left-side-op be-ta-center">
-                <el-button type="primary" size="mini" icon="el-icon-plus" @click="addChapter('')">新建文档</el-button>
+                <el-button type="primary" size="mini" icon="el-icon-plus" @click="createChapter('')">新建文档</el-button>
             </div>
         </div>
 
@@ -304,10 +304,10 @@
                 ?>
             },
             methods: {
-                addChapter(parentId) {
+                createChapter(parentId) {
                     let _this = this;
                     _this.loading = true;
-                    _this.$http.post("<?php echo beAdminUrl('Doc.Doc.addChapter'); ?>", {
+                    _this.$http.post("<?php echo beAdminUrl('Doc.Chapter.create'); ?>", {
                         project_id: _this.project.id,
                         parent_id: parentId,
                         title: "新建文档"
@@ -371,7 +371,7 @@
                 editChapter(chapterId) {
                     let _this = this;
                     _this.loading = true;
-                    _this.$http.post("<?php echo beAdminUrl('Doc.Doc.getChapter'); ?>", {
+                    _this.$http.post("<?php echo beAdminUrl('Doc.Chapter.getChapter'); ?>", {
                         chapter_id: chapterId
                     }).then(function (response) {
                         _this.loading = false;
@@ -421,7 +421,7 @@
                 saveChapter: function (isAutoSave = false) {
                     let _this = this;
                     _this.loading = true;
-                    _this.$http.post("<?php echo beAdminUrl('Doc.Doc.saveChapter'); ?>", {
+                    _this.$http.post("<?php echo beAdminUrl('Doc.Chapter.edit'); ?>", {
                         formData: _this.formData
                     }).then(function (response) {
                         _this.loading = false;
@@ -459,7 +459,7 @@
                         type: "warning"
                     }).then(function(){
                         _this.loading = true;
-                        _this.$http.post("<?php echo beAdminUrl('Doc.Doc.deleteChapter'); ?>", {
+                        _this.$http.post("<?php echo beAdminUrl('Doc.Chapter.delete'); ?>", {
                             chapter_id: chapterId
                         }).then(function (response) {
                             _this.loading = false;
@@ -549,7 +549,7 @@
 
                     let _this = this;
                     _this.loading = true;
-                    _this.$http.post("<?php echo beAdminUrl('Doc.Doc.sortChapter'); ?>", {
+                    _this.$http.post("<?php echo beAdminUrl('Doc.Chapter.sort'); ?>", {
                         formData: formData
                     }).then(function (response) {
                         _this.loading = false;

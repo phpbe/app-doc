@@ -12,7 +12,7 @@
 
     <script src="<?php echo $wwwUrl; ?>/lib/clipboard/clipboard.min.js"></script>
 
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/doc/css/chapter.css">
+    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/css/chapter/detail.css">
     <style>
         <?php
         if ($this->configChapter->stickyMenuTopOffset > 0 || $this->configChapter->stickyMenuBottomOffset > 0) {
@@ -30,7 +30,7 @@
         let stickyMenuTopOffset = <?php echo $this->configChapter->stickyMenuTopOffset; ?>;
         let stickyMenuBottomOffset = <?php echo $this->configChapter->stickyMenuBottomOffset; ?>;
     </script>
-    <script src="<?php echo $wwwUrl; ?>/doc/js/chapter.js"></script>
+    <script src="<?php echo $wwwUrl; ?>/js/chapter/detail.js"></script>
 </be-head>
 
 
@@ -43,7 +43,7 @@
                 <div class="doc-menu-title"><?php echo $this->project->title; ?></div>
                 <?php
                 if(isset($this->chapterTree) && is_array($this->chapterTree) && count($this->chapterTree) > 0) {
-                    echo \Be\Be::getService('App.Doc.Section')->getDocMenu($this->chapterTree, $this->flatChapterTree, $this->chapter);
+                    echo \Be\Be::getService('App.Doc.Chapter')->getChapterTreeMenu($this->chapterTree, $this->flatChapterTree, $this->chapter);
                 }
                 ?>
             </div>

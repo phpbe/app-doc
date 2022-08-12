@@ -38,7 +38,7 @@ $(function () {
 		}
 
 		sessionStorage.setItem(sessionStorageKey, docMenuOpenedNodeIds.join(","));
-	})
+	});
 
 	if (docMenuOpenedNodeIds.length > 0) {
 		for(let docMenuOpenedNodeId of docMenuOpenedNodeIds) {

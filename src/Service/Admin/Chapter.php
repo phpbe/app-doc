@@ -77,7 +77,7 @@ class Chapter
      *
      * @param array $data
      */
-    public function addChapter(array $data): object
+    public function create(array $data): object
     {
         if (!isset($data['project_id']) || !is_string($data['project_id'])) {
             throw new ServiceException('参数（项目ID）缺失!');
@@ -152,7 +152,7 @@ class Chapter
      *
      * @param array $data
      */
-    public function saveChapter(array $data): object
+    public function edit(array $data): object
     {
         if (!isset($data['id']) || !is_string($data['id'])) {
             throw new ServiceException('参数（id）缺失!');
@@ -281,7 +281,7 @@ class Chapter
      *
      * @param array $data
      */
-    public function sortChapter(array $data)
+    public function sort(array $data)
     {
         $db = Be::getDb();
         $db->startTransaction();
@@ -331,7 +331,7 @@ class Chapter
      * @param string $chapterId 文档ID
      * @return bool
      */
-    public function deleteChapter(string $chapterId): bool
+    public function delete(string $chapterId): bool
     {
         $tuple = Be::getTuple('doc_chapter');
         try {
@@ -356,6 +356,66 @@ class Chapter
         Be::getService('App.System.Task')->trigger('Doc.ChapterSyncEsAndCache');
 
         return true;
+    }
+
+    /**
+     * 获取菜单参数选择器
+     *
+     * @return array
+     */
+    public function getMenuPicker():array
+    {
+        $projectIdTitleKeyValues = Be::getService('App.Doc.Admin.Project')->getIdTitleKeyValues();
+        return [
+            'name' => 'chapter_id',
+            'field' => 'id',
+            'value' => '文档：{title}',
+            'table' => 'doc_chapter',
+            'grid' => [
+                'title' => '选择一个文档',
+
+                'filter' => [
+                    ['is_enable', 1],
+                    ['is_delete', 0],
+                ],
+
+                'form' => [
+                    'items' => [
+                        [
+                            'name' => 'project_id',
+                            'label' => '项目',
+                            'keyValues' => $projectIdTitleKeyValues,
+                        ],
+                        [
+                            'name' => 'title',
+                            'label' => '文档标题',
+                        ],
+                    ],
+                ],
+
+                'table' => [
+                    'items' => [
+                        [
+                            'name' => 'title',
+                            'label' => '标题',
+                            'align' => 'left'
+                        ],
+                        [
+                            'name' => 'create_time',
+                            'label' => '创建时间',
+                            'width' => '180',
+                            'sortable' => true,
+                        ],
+                        [
+                            'name' => 'update_time',
+                            'label' => '更新时间',
+                            'width' => '180',
+                            'sortable' => true,
+                        ],
+                    ],
+                ],
+            ]
+        ];
     }
 
 }

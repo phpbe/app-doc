@@ -9,7 +9,7 @@ class Project
 {
 
     /**
-     * 获取页面伪静态页网址
+     * 获取项目详情页伪静态页网址
      *
      * @param array $params
      * @return string
@@ -17,7 +17,7 @@ class Project
      */
     public function getProjectUrl(array $params = []): string
     {
-        $project = $this->getProject($params['id']);
+        $project = $this->getProject($params['project_id']);
         return '/doc/' . $project->url;
     }
 

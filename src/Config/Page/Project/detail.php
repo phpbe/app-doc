@@ -1,8 +1,8 @@
 <?php
 
-namespace Be\App\Doc\Config\Page\Doc;
+namespace Be\App\Doc\Config\Page\Project;
 
-class chapter
+class detail
 {
 
     public int $west = 0;
@@ -14,6 +14,5 @@ class chapter
             'name' => 'be-page-content',
         ],
     ];
-
 
 }

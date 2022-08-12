@@ -1,8 +1,8 @@
 <?php
 
-namespace Be\App\Doc\Config\Page\Doc;
+namespace Be\App\Doc\Config\Page\Project;
 
-class project
+class home
 {
 
     public int $west = 0;
@@ -10,6 +10,9 @@ class project
     public int $east = 0;
 
     public array $centerSections = [
+        [
+            'name' => 'be-page-title',
+        ],
         [
             'name' => 'be-page-content',
         ],
