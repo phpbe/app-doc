@@ -245,7 +245,7 @@
                         maxlength="200"
                         show-word-limit
                         :disabled="formData.url_custom === 0">
-                    <template slot="prepend"><?php echo $rootUrl; ?>/doc/</template>
+                    <template slot="prepend"><?php echo $rootUrl; ?>/doc/<?php echo $this->project->url; ?>/</template>
                 </el-input>
 
                 <div class="be-mt-150">
