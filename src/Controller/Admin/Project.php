@@ -251,7 +251,7 @@ class Project extends Auth
         } else {
             $response->set('project', false);
             $response->set('title', '新建项目');
-            $response->display('App.Doc.Admin.Doc.edit');
+            $response->display('App.Doc.Admin.Project.edit');
         }
     }
 
