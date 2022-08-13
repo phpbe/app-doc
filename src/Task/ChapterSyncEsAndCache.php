@@ -48,7 +48,7 @@ class ChapterSyncEsAndCache extends TaskInterval
         foreach ($chapters as $chapter) {
             $batch[] = $chapter;
 
-            if (in_array($chapter->project_id, $productIds)) {
+            if (!in_array($chapter->project_id, $productIds)) {
                 $productIds[] = $chapter->project_id;
             }
 
