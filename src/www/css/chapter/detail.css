@@ -1,6 +1,6 @@
 
 .doc-container {
-
+    flex-wrap: nowrap !important;
 }
 
 .doc-menu-container {
@@ -188,6 +188,7 @@
 
 
 .doc-content-container {
+    overflow: hidden;
 }
 
 .doc-content {
