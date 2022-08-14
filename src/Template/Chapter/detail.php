@@ -67,6 +67,11 @@
         <div class="be-col doc-content-container">
             <h1 class="be-h2 be-ta-center"><?php echo $this->chapter->title; ?></h1>
 
+            <div class="be-mt-200 be-ta-center be-c-999">
+                <span class="be-ml-100">更新时间：<?php echo date('Y年n月j日 H:i', strtotime($this->chapter->update_time)); ?></span>
+                <span class="be-ml-100">浏览：<?php echo $this->chapter->hits; ?></span>
+            </div>
+
             <div class="doc-content be-mt-200 be-lh-<?php echo $this->configChapter->detailLineHeight; ?> be-fs-<?php echo $this->configChapter->detailFontSize; ?>">
                 <?php
                 if ($this->chapter->description === '') {
