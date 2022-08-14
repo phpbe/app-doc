@@ -68,7 +68,23 @@
             <h1 class="be-h2 be-ta-center"><?php echo $this->chapter->title; ?></h1>
 
             <div class="doc-content be-mt-200 be-lh-<?php echo $this->configChapter->detailLineHeight; ?> be-fs-<?php echo $this->configChapter->detailFontSize; ?>">
-                <?php echo $this->chapter->description; ?>
+                <?php
+                if ($this->chapter->description === '') {
+                    echo '<ul>';
+                    foreach ($this->flatChapterTree as $chapter) {
+                        if ($chapter->parent_id === $this->chapter->id) {
+                            echo '<li>';
+                            echo '<a href="' . $chapter->url . '">';
+                            echo $chapter->title;
+                            echo '</a>';
+                            echo '</li>';
+                        }
+                    }
+                    echo '</ul>';
+                } else {
+                    echo $this->chapter->description;
+                }
+                ?>
             </div>
         </div>
     </div>
