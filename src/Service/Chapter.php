@@ -426,7 +426,7 @@ class Chapter
                 $html .= ' menu-active';
             }
 
-            $html .= '" id="node-' . $chapter->id . '" data-id="' . $chapter->id . '">';
+            $html .= '">';
 
             $html .= '<div class="menu-label"';
             if ($level > 0) {

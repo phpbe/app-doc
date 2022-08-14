@@ -3,56 +3,22 @@ hljs.initLineNumbersOnLoad();
 
 $(function () {
 
-	let sessionStorageKey = "doc-menu-opened-node-ids-" + projectId;
-	let docMenuOpenedNodeIds = sessionStorage.getItem(sessionStorageKey);
-	if (docMenuOpenedNodeIds === null) {
-		docMenuOpenedNodeIds = [];
-	} else {
-		docMenuOpenedNodeIds = docMenuOpenedNodeIds.split(",");
-	}
-
 	$(".doc-menu .icon").click(function () {
 		let $li = $(this).closest("li");
-		let chapterId = $li.data("id");
 		if ($(this).hasClass("icon-close")) {
 			$(this).removeClass("icon-close").addClass("icon-open");
 
 			$li.children("ul").slideDown(function () {
 				$li.removeClass("menu-close").addClass("menu-open");
 			});
-
-			if (docMenuOpenedNodeIds.indexOf(chapterId) === -1) {
-				docMenuOpenedNodeIds.push(chapterId);
-			}
 		} else if ($(this).hasClass("icon-open")) {
 			$(this).removeClass("icon-open").addClass("icon-close");
 
 			$li.children("ul").slideUp(function () {
 				$li.removeClass("menu-open").addClass("menu-close");
 			});
-
-			let pos = docMenuOpenedNodeIds.indexOf(chapterId);
-			if (pos > 0) {
-				docMenuOpenedNodeIds.splice(pos, 1);
-			}
 		}
-
-		sessionStorage.setItem(sessionStorageKey, docMenuOpenedNodeIds.join(","));
 	});
-
-	if (docMenuOpenedNodeIds.length > 0) {
-		for(let docMenuOpenedNodeId of docMenuOpenedNodeIds) {
-			let $li = $("#node-"+docMenuOpenedNodeId);
-			if ($li.hasClass("menu-close")) {
-				$li.removeClass("menu-close").addClass("menu-open");
-
-				let $icon = $li.children(".menu-label").children(".icon");
-				if ($icon.hasClass("icon-close")) {
-					$icon.removeClass("icon-close").addClass("icon-open");
-				}
-			}
-		}
-	}
 
 	let $docContainer = $("#doc-container");
 	let $docMenu = $("#doc-menu");

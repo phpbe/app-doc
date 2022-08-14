@@ -3,7 +3,7 @@
     $wwwUrl = \Be\Be::getProperty('App.Doc')->getWwwUrl();
     ?>
     <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/default.min.css">
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/styles/atom-one-light.css">
+    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/styles/atom-one-light.css?v=20220814">
 
     <script src="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/highlight.min.js"></script>
 
@@ -12,7 +12,7 @@
 
     <script src="<?php echo $wwwUrl; ?>/lib/clipboard/clipboard.min.js"></script>
 
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/css/chapter/detail.css">
+    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/css/chapter/detail.css?v=20220814">
     <style>
         <?php
         if ($this->configChapter->stickyMenuTopOffset > 0 || $this->configChapter->stickyMenuBottomOffset > 0) {
@@ -26,11 +26,10 @@
     </style>
 
     <script>
-        let projectId = "<?php echo $this->project->id; ?>";
         let stickyMenuTopOffset = <?php echo $this->configChapter->stickyMenuTopOffset; ?>;
         let stickyMenuBottomOffset = <?php echo $this->configChapter->stickyMenuBottomOffset; ?>;
     </script>
-    <script src="<?php echo $wwwUrl; ?>/js/chapter/detail.js"></script>
+    <script src="<?php echo $wwwUrl; ?>/js/chapter/detail.js?v=20220814"></script>
 </be-head>
 
 
