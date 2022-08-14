@@ -393,6 +393,8 @@ class Chapter
         }
 
         $openNodeIds = [];
+        $openNodeIds[] = $chapter->id;
+
         $parentId = $chapter->parent_id;
         while ($parentId !== '') {
             $openNodeIds[] = $parentId;
