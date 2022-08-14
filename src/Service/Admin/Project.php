@@ -36,6 +36,7 @@ class Project
         $project->seo_title_custom = (int)$project->seo_title_custom;
         $project->seo_description_custom = (int)$project->seo_description_custom;
         $project->ordering = (int)$project->ordering;
+        $project->hits = (int)$project->hits;
         $project->chapter_toggle_editor = (int)$project->chapter_toggle_editor;
 
         return $project;
@@ -172,6 +173,7 @@ class Project
             $tupleProject->ordering = $data['ordering'];
             $tupleProject->update_time = $now;
             if ($isNew) {
+                $tupleProject->hits = 0;
                 $tupleProject->is_delete = 0;
                 $tupleProject->create_time = $now;
                 $tupleProject->insert();

@@ -20,6 +20,7 @@ class TaskProject
         $cache = Be::getCache();
         $keyValues = [];
         foreach ($categories as $project) {
+
             $key = 'Doc:Project:' . $project->id;
 
             $project->is_delete = (int)$project->is_delete;
@@ -31,6 +32,7 @@ class TaskProject
                 $project->seo_title_custom = (int)$project->seo_title_custom;
                 $project->seo_description_custom = (int)$project->seo_description_custom;
                 $project->ordering = (int)$project->ordering;
+                $project->hits = (int)$project->hits;
                 $project->is_enable = (int)$project->is_enable;
 
                 $keyValues[$key] = $project;

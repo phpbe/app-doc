@@ -91,10 +91,9 @@ class TaskChapter
         $keyValues = [];
         foreach ($chapters as $chapter) {
 
-            $chapter->is_enable = (int)$chapter->is_enable;
-            $chapter->is_delete = (int)$chapter->is_delete;
-
             $key = 'Doc:Chapter:' . $chapter->id;
+
+            $chapter->is_delete = (int)$chapter->is_delete;
 
             if ($chapter->is_delete === 1) {
                 $cache->delete($key);
@@ -104,6 +103,8 @@ class TaskChapter
                 $chapter->seo_title_custom = (int)$chapter->seo_title_custom;
                 $chapter->seo_description_custom = (int)$chapter->seo_description_custom;
                 $chapter->ordering = (int)$chapter->ordering;
+                $chapter->hits = (int)$chapter->hits;
+                $chapter->is_enable = (int)$chapter->is_enable;
 
                 $keyValues[$key] = $chapter;
             }

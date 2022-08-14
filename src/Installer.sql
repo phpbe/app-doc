@@ -14,7 +14,7 @@ CREATE TABLE `doc_chapter` (
 `seo_description_custom` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'SEO描述是否启用自定义',
 `seo_keywords` varchar(60) NOT NULL DEFAULT '' COMMENT 'SEO关键词',
 `ordering` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-`hits` int(11) NOT NULL DEFAULT '0' COMMENT '点击量	',
+`hits` int(11) NOT NULL DEFAULT '0' COMMENT '点击量',
 `is_enable` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否启用',
 `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已删除',
 `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -35,6 +35,7 @@ CREATE TABLE `doc_project` (
 `chapter_default_editor` varchar(30) NOT NULL DEFAULT 'markdown' COMMENT '文档默认编辑器',
 `chapter_toggle_editor` tinyint(4) NOT NULL DEFAULT '1' COMMENT '文档是否可切换编辑器',
 `ordering` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+`hits` int(11) NOT NULL DEFAULT '0' COMMENT '点击量',
 `is_delete` int(11) NOT NULL DEFAULT '0' COMMENT '是否已删除',
 `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'

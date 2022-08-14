@@ -39,5 +39,44 @@ class Project
         return $project;
     }
 
+    /**
+     * 查看项目并更新点击
+     *
+     * @param string $projectId 项目ID
+     * @return object
+     */
+    public function hit(string $projectId): object
+    {
+        $cache = Be::getCache();
+
+        $product = $this->getProject($projectId);
+
+        // 点击量 使用缓存 存放
+        $hits = (int)$product->hits;
+        $hitsKey = 'Doc:Project:hits:' . $projectId;
+        $cacheHits = $cache->get($hitsKey);
+        if ($cacheHits !== false) {
+            if (is_numeric($cacheHits)) {
+                $cacheHits = (int)$cacheHits;
+                if ($cacheHits > $product->hits) {
+                    $hits = $cacheHits;
+                }
+            }
+        }
+
+        $hits++;
+
+        $cache->set($hitsKey, $hits);
+
+        // 每 100 次访问，更新到数据库
+        if ($hits % 100 === 0) {
+            $sql = 'UPDATE doc_product SET hits=?, update_time=? WHERE id=?';
+            Be::getDb()->query($sql, [$hits, date('Y-m-d H:i:s'), $projectId]);
+        }
+
+        $product->hits = $hits;
+
+        return $product;
+    }
 
 }

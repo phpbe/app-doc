@@ -29,7 +29,7 @@ class Project
                 throw new ControllerException('项目不存在！');
             }
 
-            $project = $serviceProject->getProject($projectId);
+            $project = $serviceProject->hit($projectId);
 
             $response->set('title', $project->seo_title);
             $response->set('meta_keywords', $project->seo_keywords);
