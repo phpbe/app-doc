@@ -208,7 +208,7 @@ class Project
     {
         if (count($projectIds) === 0) return;
 
-        $db = Be::getDb('shopfai');
+        $db = Be::getDb();
         $db->startTransaction();
         try {
             $now = date('Y-m-d H:i:s');
