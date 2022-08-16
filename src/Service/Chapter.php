@@ -442,7 +442,7 @@ class Chapter
             }
             $html .= '"></i>';
 
-            $html .= '<a href="' . $chapter->url . '">';
+            $html .= '<a href="' . $chapter->url . '" class="be-t-ellipsis">';
             $html .= $chapter->title;
             $html .= '</a>';
 
