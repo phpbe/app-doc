@@ -126,7 +126,7 @@ class Chapter
         $tuple->project_id = $data['project_id'];
         $tuple->parent_id = $data['parent_id'];
         $tuple->title = $data['title'];
-        $tuple->description = "\n\n";
+        $tuple->description = '';
         $tuple->description_markdown = "\n\n";
         $tuple->editor = $tupleProject->chapter_default_editor;
         $tuple->url = $data['parent_id'] . '-' . $ordering;
