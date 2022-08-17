@@ -32,8 +32,11 @@ class Project
             $project = $serviceProject->hit($projectId);
 
             $response->set('title', $project->seo_title);
-            $response->set('meta_keywords', $project->seo_keywords);
-            $response->set('meta_description', $project->seo_description);
+            $response->set('metaKeywords', $project->seo_keywords);
+            $response->set('metaDescription', $project->seo_description);
+
+            $response->set('pageTitle', $project->title);
+
             $response->set('project', $project);
 
             $serviceChapter = Be::getService('App.Doc.Chapter');
