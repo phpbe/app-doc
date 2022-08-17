@@ -179,10 +179,7 @@
             <div class="be-px-150">
                 <div class="be-row">
                     <div class="be-col-auto">
-                        SEO标题
-                        <el-tooltip effect="dark" content="标题是SEO最重要的部分，该标题会显示在搜索引擎的搜索结果中。" placement="top">
-                            <i class="el-icon-fa fa-question-circle-o"></i>
-                        </el-tooltip>：
+                        SEO标题：
                     </div>
                     <div class="be-col">
                         <div class="be-pl-100">
@@ -203,10 +200,7 @@
 
                 <div class="be-row be-mt-150">
                     <div class="be-col-auto">
-                        SEO描述
-                        <el-tooltip effect="dark" content="这是该文章分类的整体SEO描述，使文章分类在搜索引擎中获得更高的排名。" placement="top">
-                            <i class="el-icon-fa fa-question-circle-o"></i>
-                        </el-tooltip>：
+                        SEO描述：
                     </div>
                     <div class="be-col">
                         <div class="be-pl-100">
