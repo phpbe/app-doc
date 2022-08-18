@@ -74,18 +74,25 @@
 
             <div class="doc-content be-mt-200 be-lh-<?php echo $this->configChapter->detailLineHeight; ?> be-fs-<?php echo $this->configChapter->detailFontSize; ?>">
                 <?php
-                if ($this->chapter->description === '') {
-                    echo '<ul>';
+                $hasChildrenTag = strpos($this->chapter->description, '{{children}}');
+                if ($this->chapter->description === '' || $hasChildrenTag ) {
+                    $childrenHtml =  '<ul>';
                     foreach ($this->flatChapterTree as $chapter) {
                         if ($chapter->parent_id === $this->chapter->id) {
-                            echo '<li>';
-                            echo '<a href="' . $chapter->url . '">';
-                            echo $chapter->title;
-                            echo '</a>';
-                            echo '</li>';
+                            $childrenHtml .= '<li>';
+                            $childrenHtml .= '<a href="' . $chapter->url . '">';
+                            $childrenHtml .= $chapter->title;
+                            $childrenHtml .= '</a>';
+                            $childrenHtml .= '</li>';
                         }
                     }
-                    echo '</ul>';
+                    $childrenHtml .= '</ul>';
+
+                    if ($this->chapter->description === '') {
+                        echo $childrenHtml;
+                    } else {
+                        echo str_replace('{{children}}', $childrenHtml, $this->chapter->description);
+                    }
                 } else {
                     echo $this->chapter->description;
                 }
