@@ -70,7 +70,7 @@ class Project
 
         // 每 100 次访问，更新到数据库
         if ($hits % 100 === 0) {
-            $sql = 'UPDATE doc_product SET hits=?, update_time=? WHERE id=?';
+            $sql = 'UPDATE doc_project SET hits=?, update_time=? WHERE id=?';
             Be::getDb()->query($sql, [$hits, date('Y-m-d H:i:s'), $projectId]);
         }
 
