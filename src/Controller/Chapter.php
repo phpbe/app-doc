@@ -14,7 +14,6 @@ class Chapter
     /**
      * 章节详情
      *
-     * @BeMenu("指定文档", picker="return \Be\Be::getService('App.Doc.Admin.Chapter')->getMenuPicker()")
      * @BeRoute("\Be\Be::getService('App.Doc.Chapter')->getChapterUrl($params)")
      */
     public function detail()
@@ -50,6 +49,19 @@ class Chapter
 
             $configChapter = Be::getConfig('App.Doc.Chapter');
             $response->set('configChapter', $configChapter);
+
+            $northMenu = Be::getMenu('North');
+            $menuActiveId = null;
+            foreach ($northMenu->getItems() as $item) {
+                if ($item->route === 'Doc.Project.detail' && $project->id === $item->params['project_id']) {
+                    $menuActiveId = $item->id;
+                    break;
+                }
+            }
+
+            if ($menuActiveId !== null) {
+                $northMenu->setActiveId($menuActiveId);
+            }
 
             $response->display();
         } catch (\Throwable $t) {
