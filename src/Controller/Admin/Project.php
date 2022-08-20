@@ -239,9 +239,10 @@ class Project extends Auth
 
         if ($request->isAjax()) {
             try {
-                Be::getService('App.Doc.Admin.Project')->edit($request->json('formData'));
+                $project = Be::getService('App.Doc.Admin.Project')->edit($request->json('formData'));
                 $response->set('success', true);
                 $response->set('message', '新建项目成功！');
+                $response->set('project', $project);
                 $response->json();
             } catch (\Throwable $t) {
                 $response->set('success', false);
@@ -267,9 +268,10 @@ class Project extends Auth
 
         if ($request->isAjax()) {
             try {
-                Be::getService('App.Doc.Admin.Project')->edit($request->json('formData'));
+                $project = Be::getService('App.Doc.Admin.Project')->edit($request->json('formData'));
                 $response->set('success', true);
                 $response->set('message', '编辑项目成功！');
+                $response->set('project', $project);
                 $response->json();
             } catch (\Throwable $t) {
                 $response->set('success', false);

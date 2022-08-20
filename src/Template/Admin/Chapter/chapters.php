@@ -34,7 +34,6 @@
                         @node-click="(data) => editChapter(data.id)"
                         @node-drag-end="sortChapter"
                         :expand-on-click-node="false"
-                        default-expand-all
                         highlight-current
                         draggable>
                 <span class="custom-tree-node" slot-scope="{ node, data }">
