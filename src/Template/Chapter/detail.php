@@ -74,8 +74,18 @@
 
             <div class="doc-content be-mt-200 be-lh-<?php echo $this->configChapter->detailLineHeight; ?> be-fs-<?php echo $this->configChapter->detailFontSize; ?>">
                 <?php
+                $hasAnchor = strpos($this->chapter->description, '<a href="#');
+                if ($hasAnchor !== false) {
+                    $url = \Be\Be::getRequest()->getUrl();
+                    $pos = strpos($url, '#');
+                    if ($pos !== false) {
+                        $url = substr($url, 0, $pos);
+                    }
+                    $this->chapter->description = str_replace('<a href="#', '<a href="' . $url . '#', $this->chapter->description);
+                }
+
                 $hasChildrenTag = strpos($this->chapter->description, '{{children}}');
-                if ($this->chapter->description === '' || $hasChildrenTag ) {
+                if ($this->chapter->description === '' || $hasChildrenTag !== false ) {
                     $childrenHtml =  '<ul>';
                     foreach ($this->flatChapterTree as $chapter) {
                         if ($chapter->parent_id === $this->chapter->id) {
