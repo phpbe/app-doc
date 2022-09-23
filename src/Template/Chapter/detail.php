@@ -1,18 +1,38 @@
 <be-head>
     <?php
     $wwwUrl = \Be\Be::getProperty('App.Doc')->getWwwUrl();
+
+    if (strpos($this->chapter->description, '<pre ') !== false && strpos($this->chapter->description, '<code ') !== false) {
+        ?>
+        <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/default.min.css">
+        <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/styles/atom-one-light.css?v=20220814">
+
+        <script src="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/highlight.min.js"></script>
+
+        <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/highlightjs-line-numbers.css">
+        <script src="<?php echo $wwwUrl; ?>/lib/highlight.js/highlightjs-line-numbers.min.js"></script>
+
+        <script src="<?php echo $wwwUrl; ?>/lib/clipboard/clipboard.min.js"></script>
+
+        <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/css/chapter/detail.code.css">
+        <script src="<?php echo $wwwUrl; ?>/js/chapter/detail.code.js"></script>
+        <?php
+    }
+
+    if (strpos($this->chapter->description, '<img ') !== false) {
+        ?>
+        <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/lightbox/2.11.3/css/lightbox.min.css">
+        <script src="<?php echo $wwwUrl; ?>/lib/lightbox/2.11.3/js/lightbox.min.js"></script>
+        <script>
+            lightbox.option({
+                albumLabel: "图像 %1 / %2"
+            })
+        </script>
+        <?php
+    }
     ?>
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/default.min.css">
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/styles/atom-one-light.css?v=20220814">
 
-    <script src="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/highlight.min.js"></script>
-
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/highlightjs-line-numbers.css">
-    <script src="<?php echo $wwwUrl; ?>/lib/highlight.js/highlightjs-line-numbers.min.js"></script>
-
-    <script src="<?php echo $wwwUrl; ?>/lib/clipboard/clipboard.min.js"></script>
-
-    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/css/chapter/detail.css?v=20220814">
+    <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/css/chapter/detail.css?v=20220923">
     <style>
         <?php
         if ($this->configChapter->stickyMenuTopOffset > 0 || $this->configChapter->stickyMenuBottomOffset > 0) {
@@ -29,7 +49,7 @@
         let stickyMenuTopOffset = <?php echo $this->configChapter->stickyMenuTopOffset; ?>;
         let stickyMenuBottomOffset = <?php echo $this->configChapter->stickyMenuBottomOffset; ?>;
     </script>
-    <script src="<?php echo $wwwUrl; ?>/js/chapter/detail.js?v=20220814"></script>
+    <script src="<?php echo $wwwUrl; ?>/js/chapter/detail.js?v=20220923"></script>
 </be-head>
 
 
@@ -82,6 +102,27 @@
                         $url = substr($url, 0, $pos);
                     }
                     $this->chapter->description = str_replace('<a href="#', '<a href="' . $url . '#', $this->chapter->description);
+                }
+
+
+                $hasImg = strpos($this->chapter->description, '<img ');
+                if ($hasImg !== false) {
+                    preg_match_all("/<img.*?src=\"(.*?)\".*?[\/]?>/", $this->chapter->description, $matches);
+                    $i = 0;
+                    foreach ($matches[0] as $image) {
+
+                        $src = $matches[1][$i];
+
+                        $alt = '';
+                        if (preg_match("/alt=\"(.*?)\"/", $image, $match)) {
+                            $alt = $match[1];
+                        }
+
+                        $replace = '<a href="'.$src.'" data-lightbox="doc-images" data-title="'.$alt.'">' . $image . '</a>';
+
+                        $this->chapter->description = str_replace($image, $replace, $this->chapter->description);
+                        $i++;
+                    }
                 }
 
                 $hasChildrenTag = strpos($this->chapter->description, '{{children}}');

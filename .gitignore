@@ -3,6 +3,7 @@ server.php
 .htaccess
 composer.lock
 .DS_store
+.DS_Store
 Thumbs.db
 
 /data

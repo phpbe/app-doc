@@ -203,6 +203,10 @@
     border-bottom: 1px solid #ddd;
 }
 
+.doc-content img {
+    max-width: 100%;
+}
+
 
 @media (max-width: 992px) {
     .doc-menu-toggle-container {
@@ -259,20 +263,4 @@
     .doc-menu-on .doc-content-container {
         display: none;
     }
-}
-
-
-.copy-code {
-    position: relative;
-}
-
-.btn-copy-code {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    opacity: 0.1;
-}
-
-.copy-code:hover .btn-copy-code {
-    opacity: 1;
 }
