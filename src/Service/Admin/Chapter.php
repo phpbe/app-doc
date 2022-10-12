@@ -329,9 +329,8 @@ class Chapter
      * 删除文档
      *
      * @param string $chapterId 文档ID
-     * @return bool
      */
-    public function delete(string $chapterId): bool
+    public function delete(string $chapterId)
     {
         $tuple = Be::getTuple('doc_chapter');
         try {
@@ -354,8 +353,6 @@ class Chapter
         $tuple->update();
 
         Be::getService('App.System.Task')->trigger('Doc.ChapterSyncEsAndCache');
-
-        return true;
     }
 
 }

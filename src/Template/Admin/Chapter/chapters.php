@@ -446,7 +446,7 @@
                 },
                 deleteChapter(chapterId) {
                     let _this = this;
-                    _this.$confirm("确认要岫除么？", "删除确认", {
+                    _this.$confirm("确认要删除么？", "删除确认", {
                         confirmButtonText: "确定",
                         cancelButtonText: "取消",
                         type: "warning"
@@ -460,7 +460,7 @@
                                 var responseData = response.data;
                                 if (responseData.success) {
                                     _this.$message.success(responseData.message);
-                                    _this.deleteChapterTreeNode(data.id);
+                                    _this.deleteChapterTreeNode(chapterId);
                                 } else {
                                     if (responseData.message) {
                                         _this.$message.error(responseData.message);

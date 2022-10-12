@@ -225,7 +225,7 @@ class Project
 
                 Be::getTable('doc_chapter')
                     ->where('project_id', $projectId)
-                    ->update(['is_delete' => 0, 'update_time' => $now]);
+                    ->update(['is_delete' => 1, 'update_time' => $now]);
 
                 $tupleProject->url = $projectId;
                 $tupleProject->is_delete = 1;

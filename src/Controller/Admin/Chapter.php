@@ -145,10 +145,9 @@ class Chapter extends Auth
         $response = Be::getResponse();
         try {
             $chapterId = $request->json('chapter_id', '');
-            $chapter = Be::getService('App.Doc.Admin.Chapter')->delete($chapterId);
+            Be::getService('App.Doc.Admin.Chapter')->delete($chapterId);
             $response->set('success', true);
             $response->set('message', '删除文档成功！');
-            $response->set('chapter', $chapter);
             $response->json();
         } catch (\Throwable $t) {
             $response->set('success', false);
