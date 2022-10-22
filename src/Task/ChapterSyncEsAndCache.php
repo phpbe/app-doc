@@ -38,7 +38,7 @@ class ChapterSyncEsAndCache extends TaskInterval
 
         $service = Be::getService('App.Doc.Admin.TaskChapter');
         $db = Be::getDb();
-        $sql = 'SELECT * FROM doc_chapter WHERE is_enable != -1 AND update_time >= ? AND update_time < ?';
+        $sql = 'SELECT * FROM doc_chapter WHERE is_enable != -1 AND update_time >= ? AND update_time <= ?';
         $chapters = $db->getYieldObjects($sql, [$d1, $d2]);
 
         $productIds = [];

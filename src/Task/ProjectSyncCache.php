@@ -33,7 +33,7 @@ class ProjectSyncCache extends TaskInterval
 
         $service = Be::getService('App.Doc.Admin.TaskProject');
         $db = Be::getDb();
-        $sql = 'SELECT * FROM doc_project WHERE update_time >= ? AND update_time < ?';
+        $sql = 'SELECT * FROM doc_project WHERE update_time >= ? AND update_time <= ?';
         $categories = $db->getYieldObjects($sql, [$d1, $d2]);
 
         $batch = [];
