@@ -55,12 +55,12 @@
 
 .doc-menu-toggle-on:hover,
 .doc-menu-toggle-off:hover {
-    background-color: var(--main-color-9);
+    background-color: var(--major-color-9);
 }
 
 .doc-menu-toggle-on:hover svg,
 .doc-menu-toggle-off:hover svg {
-    color: var(--main-color);
+    color: var(--major-color);
 }
 
 .doc-menu-toggle-on {
@@ -97,17 +97,17 @@
 }
 
 .doc-menu .menu-active > .menu-label {
-    background-color: var(--main-color-8);
-    color: var(--main-color);
+    background-color: var(--major-color-8);
+    color: var(--major-color);
 }
 
 .doc-menu .menu-label:hover {
-    background-color: var(--main-color-9);
-    color: var(--main-color);
+    background-color: var(--major-color-9);
+    color: var(--major-color);
 }
 
 .doc-menu .menu-active .menu-label:hover {
-    background-color: var(--main-color-8);
+    background-color: var(--major-color-8);
 }
 
 .doc-menu .menu-label a {
@@ -117,11 +117,11 @@
 }
 
 .doc-menu .menu-label a:hover {
-    color: var(--main-color);
+    color: var(--major-color);
 }
 
 .doc-menu .menu-active > .menu-label a {
-    color: var(--main-color);
+    color: var(--major-color);
 }
 
 .doc-menu .icon {
@@ -143,12 +143,12 @@
 }
 
 .doc-menu .menu-active > .menu-label .icon-open {
-    border-top: .5em solid var(--main-color-2);
+    border-top: .5em solid var(--major-color-2);
 }
 
 .doc-menu .icon-open:hover,
 .doc-menu .menu-active > .menu-label .icon-open:hover {
-    border-top: .5em solid var(--main-color);
+    border-top: .5em solid var(--major-color);
 }
 
 
@@ -162,12 +162,12 @@
 }
 
 .doc-menu .menu-active > .menu-label .icon-close {
-    border-left: .5em solid var(--main-color-2);
+    border-left: .5em solid var(--major-color-2);
 }
 
 .doc-menu .icon-close:hover,
 .doc-menu .menu-active > .menu-label .icon-close:hover {
-    border-left: .5em solid var(--main-color);
+    border-left: .5em solid var(--major-color);
 }
 
 .doc-menu .menu-close ul {
