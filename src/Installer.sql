@@ -19,7 +19,7 @@ CREATE TABLE `doc_chapter` (
 `is_delete` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已删除',
 `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='章节';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='章节';
 
 CREATE TABLE `doc_project` (
 `id` varchar(36) NOT NULL DEFAULT 'uuid()' COMMENT 'UUID',
@@ -39,7 +39,7 @@ CREATE TABLE `doc_project` (
 `is_delete` int(11) NOT NULL DEFAULT '0' COMMENT '是否已删除',
 `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分类';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci COMMENT='分类';
 
 ALTER TABLE `doc_chapter`
 ADD PRIMARY KEY (`id`),
