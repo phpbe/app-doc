@@ -112,7 +112,7 @@
 
 .doc-menu .menu-label a {
     flex: 1;
-    color: #666;
+    color: var(--font-color-2);
     text-decoration: none;
 }
 
