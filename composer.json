@@ -16,8 +16,7 @@
     }
   ],
   "require": {
-    "be/be": "^2.7",
-    "ext-json": "*"
+    "be/be": "^2.7"
   },
   "autoload": {
     "psr-4": {
