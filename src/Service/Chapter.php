@@ -366,14 +366,17 @@ class Chapter
      * 获取文档伪静态页网址
      *
      * @param array $params
-     * @return string
+     * @return array
      * @throws ServiceException
      */
-    public function getChapterUrl(array $params = []): string
+    public function getChapterUrl(array $params = []): array
     {
         $chapter = $this->getChapter($params['chapter_id']);
         $project = Be::getService('App.Doc.Project')->getProject($chapter->project_id);
-        return '/doc/' . $project->url . '/' . $chapter->url;
+
+        $params1 = ['chapter_id' => $params['chapter_id']];
+        unset($params['chapter_id']);
+        return ['/doc/' . $project->url . '/' . $chapter->url, $params1, $params];
     }
 
 

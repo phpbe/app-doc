@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "be/be": "^2.5",
+    "be/be": "^2.7",
     "ext-json": "*"
   },
   "autoload": {

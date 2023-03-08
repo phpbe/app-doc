@@ -12,13 +12,16 @@ class Project
      * 获取项目详情页伪静态页网址
      *
      * @param array $params
-     * @return string
+     * @return array
      * @throws ServiceException
      */
-    public function getProjectUrl(array $params = []): string
+    public function getProjectUrl(array $params = []): array
     {
         $project = $this->getProject($params['project_id']);
-        return '/doc/' . $project->url;
+
+        $params1 = ['project_id' => $params['project_id']];
+        unset($params['project_id']);
+        return ['/doc/' . $project->url, $params1, $params];
     }
 
     /**
