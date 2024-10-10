@@ -21,12 +21,64 @@ class Chapter
 
         $key = 'Doc:Chapter:' . $chapterId;
         $chapter = $cache->get($key);
-        if (!$chapter) {
-            throw new ServiceException('文档（#' . $chapterId . '）不存在！');
+        if ($chapter) {
+            if (!is_object($chapter)) {
+                throw new ServiceException('文档（#' . $chapterId . '）不存在！');
+            }
+        } else {
+            $configChapter = Be::getConfig('App.Doc.Chapter');
+            if (!isset($configChapter->cacheNotExistsLoadFromDb)) {
+                $configChapter->cacheNotExistsLoadFromDb = 1;
+                $configChapter->cacheNotExistsLoadFromDbExceptionLockTime = 600;
+            }
+            
+            if ($configChapter->cacheNotExistsLoadFromDb === 1) {
+                try {
+                    # 从数据库中加载
+                    $chapter = $this->getChapterFromDb($chapterId);
+                    $cache->set($key, $chapter);
+                } catch (Throwable $t) {
+                    # 数据库中不存在，缓存锁定一段时间
+                    if ($configProject->cacheNotExistsLoadFromDbExceptionLockTime > 0) {
+                        $cache->set($key, '', $configChapter->cacheNotExistsLoadFromDbExceptionLockTime);
+                    }
+                }
+            } else {
+                throw new ServiceException('文档（#' . $chapterId . '）不存在！');
+            }
         }
 
         return $chapter;
     }
+
+    /**
+     * 获取文档 - 从数据库读取
+     *
+     * @param string $chapterId 文档ID
+     * @return object 文档对象
+     * @throws ServiceException
+     */
+    public function getChapterFromDb(string $chapterId): object
+    {
+        $db = Be::getDb();
+        $sql = 'SELECT * FROM doc_chapter WHERE id = ? AND is_enable = 1 AND is_delete = 0';
+        $chapter = $db->getObject($sql, [$chapterId]);
+        if (!$chapter) {
+            throw new ServiceException('文档（#' . $chapterId . '）不存在！');
+        }
+
+        $chapter->url_custom = (int)$chapter->url_custom;
+        $chapter->seo_title_custom = (int)$chapter->seo_title_custom;
+        $chapter->seo_description_custom = (int)$chapter->seo_description_custom;
+        $chapter->ordering = (int)$chapter->ordering;
+        $chapter->hits = (int)$chapter->hits;
+        $chapter->is_enable = (int)$chapter->is_enable;
+        $chapter->is_delete = (int)$chapter->is_delete;
+
+        return $chapter;
+    }
+
+
 
     /**
      * 获取文档树

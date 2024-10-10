@@ -35,10 +35,57 @@ class Project
         $cache = Be::getCache();
         $key = 'Doc:Project:' . $projectId;
         $project = $cache->get($key);
+        if ($project) {
+            if (!is_object($project)) {
+                throw new ServiceException('项目（#' . $projectId . '）不存在！');
+            }
+        } else {
+            $configProject = Be::getConfig('App.Doc.Project');
+            if (!isset($configProject->cacheNotExistsLoadFromDb)) {
+                $configProject->cacheNotExistsLoadFromDb = 1;
+                $configProject->cacheNotExistsLoadFromDbExceptionLockTime = 600;
+            }
+
+            if ($configProject->cacheNotExistsLoadFromDb === 1) {
+                try {
+                    # 从数据库中加载
+                    $project = $this->getProjectFromDb($projectId);
+                    $cache->set($key, $project);
+                } catch (Throwable $t) {
+                    # 数据库中不存在，缓存锁定一段时间
+                    if ($configProject->cacheNotExistsLoadFromDbExceptionLockTime > 0) {
+                        $cache->set($key, '', $configProject->cacheNotExistsLoadFromDbExceptionLockTime);
+                    }
+                }
+            } else {
+                throw new ServiceException('项目（#' . $projectId . '）不存在！');
+            }
+        }
+
+        return $project;
+    }
+
+    /**
+     * 获取项目 - 从数据库读取
+     *
+     * @param string $projectId 项目ID
+     * @return object
+     */
+    public function getProjectFromDb(string $projectId): object
+    {
+        $db = Be::getDb();
+        $sql = 'SELECT * FROM doc_project WHERE id = ? AND is_delete = 0';
+        $project = $db->getObject($sql, [$projectId]);
         if (!$project) {
             throw new ServiceException('项目（#' . $projectId . '）不存在！');
         }
 
+        $project->url_custom = (int)$project->url_custom;
+        $project->seo_title_custom = (int)$project->seo_title_custom;
+        $project->seo_description_custom = (int)$project->seo_description_custom;
+        $project->ordering = (int)$project->ordering;
+        $project->hits = (int)$project->hits;
+        $project->is_delete = (int)$project->is_delete;
         return $project;
     }
 
