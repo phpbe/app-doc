@@ -3,6 +3,24 @@
     flex-wrap: nowrap !important;
 }
 
+.doc-container table:not([class]) {
+    border: var(--font-color-8) 1px solid;
+    border-collapse: collapse;
+}
+
+.doc-container table:not([class]) th {
+    background-color: var(--font-color-9);
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.doc-container table:not([class]) td {
+    border: var(--font-color-8) 1px solid;
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+
 .doc-menu-container {
     width: 300px;
 }

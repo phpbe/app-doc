@@ -2,7 +2,7 @@
     <?php
     $wwwUrl = \Be\Be::getProperty('App.Doc')->getWwwUrl();
 
-    if (strpos($this->chapter->description, '<pre ') !== false && strpos($this->chapter->description, '<code ') !== false) {
+    if (strpos($this->chapter->description, '<pre') !== false && strpos($this->chapter->description, '<code ') !== false) {
         ?>
         <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/default.min.css">
         <link rel="stylesheet" href="<?php echo $wwwUrl; ?>/lib/highlight.js/11.5.1/styles/atom-one-light.css?v=20220814">
