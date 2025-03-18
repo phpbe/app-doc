@@ -309,7 +309,7 @@ class Chapter
                 }
 
                 $tuple->ordering = $x['ordering'];
-                $tuple->update_time = date('Y-m-d H:i:s');
+                //$tuple->update_time = date('Y-m-d H:i:s');
                 $tuple->update();
 
                 $i++;
