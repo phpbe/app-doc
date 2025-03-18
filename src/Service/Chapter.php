@@ -23,7 +23,7 @@ class Chapter
         $chapter = $cache->get($key);
         if ($chapter) {
             if (!is_object($chapter)) {
-                throw new ServiceException('文档（#' . $chapterId . '）不存在！');
+                throw new ServiceException('doc - 文档（#' . $chapterId . '）不存在！');
             }
         } else {
             $configChapter = Be::getConfig('App.Doc.Chapter');
@@ -31,7 +31,7 @@ class Chapter
                 $configChapter->cacheNotExistsLoadFromDb = 1;
                 $configChapter->cacheNotExistsLoadFromDbExceptionLockTime = 600;
             }
-            
+
             if ($configChapter->cacheNotExistsLoadFromDb === 1) {
                 try {
                     # 从数据库中加载
@@ -44,7 +44,7 @@ class Chapter
                     }
                 }
             } else {
-                throw new ServiceException('文档（#' . $chapterId . '）不存在！');
+                throw new ServiceException('doc - 文档（#' . $chapterId . '）不存在！');
             }
         }
 
@@ -64,7 +64,7 @@ class Chapter
         $sql = 'SELECT * FROM doc_chapter WHERE id = ? AND is_enable = 1 AND is_delete = 0';
         $chapter = $db->getObject($sql, [$chapterId]);
         if (!$chapter) {
-            throw new ServiceException('文档（#' . $chapterId . '）不存在！');
+            throw new ServiceException('doc - 文档（#' . $chapterId . '）不存在！');
         }
 
         $chapter->url_custom = (int)$chapter->url_custom;

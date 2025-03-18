@@ -20,7 +20,7 @@ class Chapter
      *     driver="FormItemInputNumberInt"
      * )
      */
-    public int $autoSaveInterval = 15;
+    public int $autoSaveInterval = 3;
 
     /**
      * @BeConfigItem("文章详情页文字大小",

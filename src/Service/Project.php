@@ -37,7 +37,7 @@ class Project
         $project = $cache->get($key);
         if ($project) {
             if (!is_object($project)) {
-                throw new ServiceException('项目（#' . $projectId . '）不存在！');
+                throw new ServiceException('doc - 项目（#' . $projectId . '）不存在！');
             }
         } else {
             $configProject = Be::getConfig('App.Doc.Project');
@@ -58,7 +58,7 @@ class Project
                     }
                 }
             } else {
-                throw new ServiceException('项目（#' . $projectId . '）不存在！');
+                throw new ServiceException('doc - 项目（#' . $projectId . '）不存在！');
             }
         }
 
@@ -77,7 +77,7 @@ class Project
         $sql = 'SELECT * FROM doc_project WHERE id = ? AND is_delete = 0';
         $project = $db->getObject($sql, [$projectId]);
         if (!$project) {
-            throw new ServiceException('项目（#' . $projectId . '）不存在！');
+            throw new ServiceException('doc - 项目（#' . $projectId . '）不存在！');
         }
 
         $project->url_custom = (int)$project->url_custom;
