@@ -641,6 +641,7 @@
                 toggleEditor() {
                     if (this.formData.editor === 'tinymce') {
                         this.formItems.description.instance.setContent(this.formData.description);
+                        this.formItems.description.instance.render();
                     } else {
                         this.formItems.description_markdown.instance.setMarkdown(this.formData.description_markdown);
                     }
@@ -686,6 +687,10 @@
                             document.onmouseup = null;
                             resize.releaseCapture && resize.releaseCapture();
                             _this.$cookies.set(cookieKey, _this.leftWidth, 86400 * 180);
+                            
+                            if (_this.formData.editor === 'tinymce') {
+                                _this.formItems.description.instance.render();
+                            }
                         };
                         resize.setCapture && resize.setCapture();
                         return false;
